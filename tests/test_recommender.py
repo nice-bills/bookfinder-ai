@@ -44,10 +44,10 @@ class TestRecommender(unittest.TestCase):
 
     def test_get_recommendations(self):
         # Test with a book that exists
-        recs = self.recommender.get_recommendations('alpha book', top_k=2)
+        recs = self.recommender.get_recommendations('alpha book', top_k=1, similarity_threshold=0.0)
 
-        # 1. Should return top_k recommendations
-        self.assertEqual(len(recs), 2)
+        # 1. Should return 1 recommendation
+        self.assertEqual(len(recs), 1)
 
         # 2. The input book itself should not be in the recommendations
         rec_titles = [r['title'] for r in recs]

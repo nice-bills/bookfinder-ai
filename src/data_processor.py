@@ -78,7 +78,7 @@ def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     # Ensure title is not empty
     original_rows = len(df)
     df.dropna(subset=['title_lower'], inplace=True)
-    df = df[df['title_lower'] != '']
+    df = df[df['title_lower'] != ''].copy()
     if len(df) < original_rows:
         logger.warning(f"Dropped {original_rows - len(df)} rows with missing titles.")
 

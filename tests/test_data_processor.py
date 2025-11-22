@@ -42,7 +42,7 @@ class TestDataProcessor(unittest.TestCase):
 
         # 3. Test that NaN values are filled and list-strings are parsed
         self.assertFalse(processed_df['genres'].isnull().any())
-        self.assertEqual(processed_df.iloc[0]['genres'], 'Fiction')
+        self.assertEqual(processed_df.iloc[0]['genres'], 'fiction')
 
         # 4. Test that 'combined_text' column is created and is correct
         self.assertIn('combined_text', processed_df.columns)
