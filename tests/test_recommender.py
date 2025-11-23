@@ -5,8 +5,8 @@ import os
 import pandas as pd
 import numpy as np
 import tempfile
-from src.recommender import BookRecommender
-import src.config as config # Import config for EMBEDDING_DIMENSION
+from src.book_recommender.ml.recommender import BookRecommender
+import src.book_recommender.core.config as config # Import config for EMBEDDING_DIMENSION
 
 class TestRecommender(unittest.TestCase):
 

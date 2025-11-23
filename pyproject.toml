@@ -1,19 +1,102 @@
 [project]
-name = "books"
-version = "0.1.0"
-description = "Add your description here"
+name = "bookfinder-ai"
+version = "1.0.0"
+description = "AI-powered semantic book recommendation engine"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+keywords = [
+    "machine-learning",
+    "nlp",
+    "recommendation-system",
+    "fastapi",
+    "streamlit",
+    "books"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
 dependencies = [
     "faiss-cpu>=1.13.0",
-    "numpy==1.26.4",
+    "numpy>=1.26.4",
     "pandas>=2.3.3",
     "pyarrow>=22.0.0",
-    "pytest>=9.0.1",
     "requests>=2.32.5",
     "scikit-learn>=1.7.2",
-    "sentence-transformers==2.5.1",
+    "sentence-transformers>=2.5.1",
     "streamlit>=1.40.0",
-    "torch==2.2.2",
-    "transformers==4.38.2",
+    "torch>=2.2.2",
+    "transformers>=4.38.2",
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.5.2",
+    "python-dotenv>=1.0.0",
+    "plotly>=5.18.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.1",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "black>=23.0.0",
+    "mypy>=1.7.0",
+    "safety>=2.3.0",
+    "pip-audit>=2.6.0",
+    "pre-commit>=3.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/bookfinder-ai"
+Documentation = "https://github.com/yourusername/bookfinder-ai/tree/main/docs"
+Repository = "https://github.com/yourusername/bookfinder-ai"
+"Bug Tracker" = "https://github.com/yourusername/bookfinder-ai/issues"
+
+[project.scripts]
+bookfinder-web = "src.book_recommender.apps.main_app:main"
+bookfinder-api = "src.book_recommender.api.main:main"
+bookfinder-analytics = "src.book_recommender.apps.analytics_app:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--verbose",
+    "--cov=src",
+    "--cov-report=html",
+    "--cov-report=term",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+select = ["E", "F", "I", "N", "W"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 120
+target-version = ["py310", "py311", "py312"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true

@@ -4,8 +4,8 @@ import unittest
 import os
 import pandas as pd
 import tempfile
-from src.data_processor import clean_and_prepare_data
-from src.exceptions import DataNotFoundError, FileProcessingError
+from src.book_recommender.data.processor import clean_and_prepare_data
+from src.book_recommender.core.exceptions import DataNotFoundError, FileProcessingError
 
 class TestDataProcessor(unittest.TestCase):
 

@@ -10,3 +10,7 @@ pytest
 pyarrow
 faiss-cpu
 requests
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv

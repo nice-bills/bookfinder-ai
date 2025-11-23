@@ -17,7 +17,7 @@ class TestStreamlitApp(unittest.TestCase):
         without syntax errors or immediate import errors.
         """
         try:
-            from app import main
+            from src.book_recommender.apps.main_app import main
             self.assertTrue(callable(main))
         except ImportError as e:
             self.fail(f"Failed to import the Streamlit app: {e}")

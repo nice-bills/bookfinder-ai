@@ -2,13 +2,26 @@
 
 import unittest
 import os
+import sys
 import tempfile
 import pandas as pd
-from src.data_processor import process_dataframe
-from src.embedder import generate_embeddings
-from src.recommender import BookRecommender
-import src.config as config
 import numpy as np
+
+
+
+from src.book_recommender.data.processor import process_dataframe
+from src.book_recommender.ml.embedder import generate_embeddings
+from src.book_recommender.ml.recommender import BookRecommender
+import src.book_recommender.core.config as config
+from src.book_recommender.ml.clustering import cluster_books, get_cluster_names # For testing clustering logic
+from src.book_recommender.ml.explainability import explain_recommendation # For testing explainability logic
+from src.book_recommender.ml.feedback import save_feedback, get_all_feedback # For testing feedback logic
+
+# FastAPI related imports
+from fastapi.testclient import TestClient
+from src.book_recommender.api.main import app # Import the FastAPI app
+from src.book_recommender.api.models import Book, RecommendationResult, BookStats, BookSearchResult, BookCluster, ExplainRecommendationRequest, ExplanationResponse, FeedbackRequest, FeedbackStatsResponse
+
 
 class TestIntegration(unittest.TestCase):
 

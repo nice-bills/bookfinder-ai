@@ -2,17 +2,27 @@
 
 import streamlit as st
 import os
-import logging
 import json
 from datetime import datetime
-from src.data_processor import clean_and_prepare_data
-from src.exceptions import DataNotFoundError, FileProcessingError, ModelLoadError
-from src.recommender import BookRecommender
-from src.utils import get_cover_url_multi_source, load_book_covers_batch
-from src.embedder import generate_embedding_for_query
-import src.config as config
+import uuid # New import for session ID
+from book_recommender.data.processor import clean_and_prepare_data
+from book_recommender.core.exceptions import DataNotFoundError, FileProcessingError, ModelLoadError
+from book_recommender.ml.recommender import BookRecommender
+from book_recommender.utils import get_cover_url_multi_source, load_book_covers_batch
+from book_recommender.ml.embedder import generate_embedding_for_query
+import book_recommender.core.config as config
 import pandas as pd
 import numpy as np
+import logging # Keep logging import for logger instance
+from typing import Optional # New import
+from book_recommender.core.logging_config import configure_logging # Import logging configuration
+from book_recommender.ml.clustering import cluster_books, get_cluster_names # New import
+from book_recommender.ml.explainability import explain_recommendation # New import
+from book_recommender.ml.feedback import save_feedback # New import
+
+# Configure logging at the very beginning of the app
+configure_logging(log_file="app.log", log_level=os.getenv("LOG_LEVEL", "INFO"))
+logger = logging.getLogger(__name__) # Initialize logger for this module
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -331,7 +341,7 @@ def load_recommender() -> BookRecommender:
         book_data = pd.read_parquet(config.PROCESSED_DATA_PATH)
         embeddings = np.load(config.EMBEDDINGS_PATH)
     else:
-        from src.embedder import generate_embeddings
+        from book_recommender.ml.embedder import generate_embeddings
         
         if not os.path.exists(config.RAW_DATA_PATH):
             raise DataNotFoundError(f"Raw data file not found at: {config.RAW_DATA_PATH}")
@@ -346,6 +356,26 @@ def load_recommender() -> BookRecommender:
 
     recommender = BookRecommender(book_data=book_data, embeddings=embeddings)
     return recommender
+
+@st.cache_resource(show_spinner=False)
+def load_cluster_data() -> tuple[np.ndarray, dict, pd.DataFrame]:
+    """
+    Generates and returns cached book clusters, cluster names, and book data with cluster IDs.
+    """
+    logger.info("Generating/Loading cluster data for Streamlit app...")
+    recommender = load_recommender() # Use the existing cached recommender
+    book_data_df = recommender.book_data.copy() # Work on a copy to add cluster_id
+    embeddings_arr = recommender.embeddings # Use embeddings from recommender
+
+    # Generate clusters
+    clusters_arr, _ = cluster_books(embeddings_arr, n_clusters=config.NUM_CLUSTERS)
+    book_data_df['cluster_id'] = clusters_arr
+
+    # Generate cluster names
+    names = get_cluster_names(book_data_df, clusters_arr)
+    
+    logger.info("Cluster data generated/loaded and cached for Streamlit app.")
+    return clusters_arr, names, book_data_df
 
 def render_header():
     """Modern header with gradient background."""
@@ -391,7 +421,7 @@ def render_search_section():
     
     return query, search_button
 
-def render_book_card(rec, index, cover_url):
+def render_book_card(rec, index, cover_url, query_text: Optional[str] = None):
     """Render a beautiful book card with all details."""
     
     # Wrapper div
@@ -412,9 +442,10 @@ def render_book_card(rec, index, cover_url):
     st.markdown('<div class="book-info-section">', unsafe_allow_html=True)
     
     # Similarity badge
-    similarity_percent = rec['similarity'] * 100
-    st.markdown(f'<div class="similarity-badge">{similarity_percent:.0f}% Match</div>', 
-                unsafe_allow_html=True)
+    if 'similarity' in rec:
+        similarity_percent = rec['similarity'] * 100
+        st.markdown(f'<div class="similarity-badge">{similarity_percent:.0f}% Match</div>', 
+                    unsafe_allow_html=True)
     
     # Title (clamped to 2 lines)
     st.markdown(f'<div class="book-title">{rec["title"]}</div>', 
@@ -459,16 +490,49 @@ def render_book_card(rec, index, cover_url):
             desc = rec['description'][:250] + "..." if len(rec['description']) > 250 else rec['description']
             st.write(desc)
     
-    # View Details button
-    if st.button("View Details", key=f"details_{index}", width="stretch"):
-        show_book_details(rec)
+    # Explanation expander (only for search results)
+    if query_text and 'similarity' in rec: # Only show explanation if it's a search result and has similarity
+        with st.expander("💡 Why this recommendation?"):
+            from book_recommender.ml.explainability import explain_recommendation, get_contribution_scores # Re-import if not already
+            explanation = explain_recommendation(
+                query_text=query_text,
+                recommended_book=rec,
+                similarity_score=rec['similarity']
+            )
+            
+            st.info(explanation['summary'])
+            
+            # Show matching features
+            if explanation.get('matching_features'):
+                st.markdown("**Matching features:**")
+                for feature in explanation['matching_features']:
+                    st.markdown(f"• {feature}")
+    
+    # Action buttons
+    if query_text: # Only show feedback and details button for search results
+        col_a, col_b, col_c = st.columns([1, 1, 3])
+
+        with col_a:
+            if st.button("👍", key=f"like_{index}", help="Good recommendation", use_container_width=True):
+                save_feedback(query_text, rec, "positive", st.session_state.session_id)
+                st.toast(f"Thank you for your feedback on '{rec['title']}'!", icon="👍")
+        with col_b:
+            if st.button("👎", key=f"dislike_{index}", help="Not relevant", use_container_width=True):
+                save_feedback(query_text, rec, "negative", st.session_state.session_id)
+                st.toast(f"Thank you for your feedback on '{rec['title']}'!", icon="👎")
+        with col_c:
+            if st.button("View Details", key=f"details_{index}", width="stretch"):
+                show_book_details(rec, query_text=query_text)
+    else: # For non-search results (e.g., cluster browsing), only show "View Details"
+        if st.button("View Details", key=f"details_{index}", width="stretch"):
+                show_book_details(rec, query_text=query_text)
     
     st.markdown('</div>', unsafe_allow_html=True)  # Close card-actions
     st.markdown('</div>', unsafe_allow_html=True)  # Close book-content
     st.markdown('</div></div>', unsafe_allow_html=True)  # Close card and wrapper
 
 @st.dialog("Book Details")
-def show_book_details(book):
+def show_book_details(book, query_text: Optional[str] = None):
     col1, col2 = st.columns([1, 2])
     
     with col1:
@@ -478,6 +542,16 @@ def show_book_details(book):
         st.markdown(f"## {book['title']}")
         st.markdown(f"**by {book.get('authors', 'Unknown Author')}**")
         
+        if query_text and 'similarity' in book: # Explanation in details dialog too
+            explanation = explain_recommendation(
+                query_text=query_text,
+                recommended_book=book,
+                similarity_score=book['similarity']
+            )
+            st.markdown(f"**Match Score:** {explanation['match_score']}% (Confidence: {explanation['confidence']})")
+            st.write(explanation['summary'])
+            st.divider() # Add divider after explanation
+
         similarity_percent = book['similarity'] * 100
         st.markdown(f"**{similarity_percent:.0f}% Match**")
         
@@ -549,91 +623,150 @@ def main():
         st.session_state.search_history = []
     if 'recommendations' not in st.session_state:
         st.session_state.recommendations = []
+    if 'session_id' not in st.session_state:
+        st.session_state.session_id = str(uuid.uuid4()) # Generate a unique session ID
     
     try:
         recommender = load_recommender()
         render_sidebar(recommender)
         
-        # Search section
-        query, search_button = render_search_section()
-        
-        # Process search if button is clicked or if a history item was clicked
-        if (search_button and query.strip()) or (query and query != st.session_state.get('last_query', '')):
-            st.session_state.last_query = query
-            with st.spinner("Finding the perfect books for you..."):
-                query_embedding = generate_embedding_for_query(query)
-                # Store raw recommendations in session state
-                st.session_state.recommendations = recommender.get_recommendations_from_vector(
-                    query_embedding,
-                    top_k=50,  # Fetch more results to allow for effective filtering
-                    similarity_threshold=0.25
-                )
+        tab1, tab2 = st.tabs(["Search", "Browse Collections"])
+
+        with tab1:
+            # Search section (existing code moved here)
+            query, search_button = render_search_section()
             
+            # Process search if button is clicked or if a history item was clicked
+            if (search_button and query.strip()) or (query and query != st.session_state.get('last_query', '')):
+                st.session_state.last_query = query
+                with st.spinner("Finding the perfect books for you..."):
+                    query_embedding = generate_embedding_for_query(query)
+                    # Store raw recommendations in session state
+                    st.session_state.recommendations = recommender.get_recommendations_from_vector(
+                        query_embedding,
+                        top_k=50,  # Fetch more results to allow for effective filtering
+                        similarity_threshold=0.25
+                    )
+                
+                if st.session_state.recommendations:
+                    # Add to search history
+                    st.session_state.search_history.append({
+                        'query': query,
+                        'timestamp': datetime.now(),
+                        'results_count': len(st.session_state.recommendations)
+                    })
+                    st.session_state.search_history = st.session_state.search_history[-5:]
+                    # Rerun to apply filters on the new recommendations
+                    st.rerun()
+                else:
+                    st.warning("No books found matching your description. Try being more specific or use different keywords!")
+                    st.session_state.recommendations = [] # Clear old results
+
+            elif search_button:
+                st.warning("Please describe what kind of book you're looking for!")
+
+            # --- Display Results (runs on every interaction) ---
             if st.session_state.recommendations:
-                # Add to search history
-                st.session_state.search_history.append({
-                    'query': query,
-                    'timestamp': datetime.now(),
-                    'results_count': len(st.session_state.recommendations)
-                })
-                st.session_state.search_history = st.session_state.search_history[-5:]
-                # Rerun to apply filters on the new recommendations
-                st.rerun()
-            else:
-                st.warning("No books found matching your description. Try being more specific or use different keywords!")
-                st.session_state.recommendations = [] # Clear old results
+                # Apply filters
+                filtered = st.session_state.recommendations
+                min_rating = st.session_state.get('min_rating', 0.0)
+                selected_genres = st.session_state.get('selected_genres', [])
 
-        elif search_button:
-            st.warning("Please describe what kind of book you're looking for!")
+                if min_rating > 0.0:
+                    filtered = [
+                        rec for rec in filtered 
+                        if rec.get('rating') and pd.notna(rec['rating']) 
+                        and float(rec.get('rating', 0)) >= min_rating
+                    ]
+                
+                if selected_genres:
+                    filtered = [
+                        rec for rec in filtered
+                        if rec.get('genres') and any(g in rec.get('genres', '') for g in selected_genres)
+                    ]
 
-        # --- Display Results (runs on every interaction) ---
-        if st.session_state.recommendations:
-            # Apply filters
-            filtered = st.session_state.recommendations
-            min_rating = st.session_state.get('min_rating', 0.0)
-            selected_genres = st.session_state.get('selected_genres', [])
+                # Results header
+                st.markdown(
+                    f'<div class="results-header">✨ Found {len(filtered)} Perfect Books For You</div>',
+                    unsafe_allow_html=True
+                )
+                
+                if not filtered:
+                    st.info("😕 No books match your current filters. Try adjusting them!")
+                else:
+                    # --- Batch-fetch covers for visible books ---
+                    visible_recs = filtered[:12]
+                    with st.spinner("Loading book covers..."):
+                        covers_dict = load_book_covers_batch(visible_recs)
 
-            if min_rating > 0.0:
-                filtered = [
-                    rec for rec in filtered 
-                    if rec.get('rating') and pd.notna(rec['rating']) 
-                    and float(rec.get('rating', 0)) >= min_rating
-                ]
+                    # Display in rows of 4
+                    for row_idx in range(0, min(len(filtered), 12), 4):
+                        cols = st.columns(4, gap="medium")
+                        
+                        for col_idx, rec in enumerate(filtered[row_idx:row_idx+4]):
+                            with cols[col_idx]:
+                                # Generate unique index for Streamlit keys
+                                unique_idx = row_idx + col_idx
+                                cover_url = covers_dict.get(rec['title'], config.FALLBACK_COVER_URL)
+                                render_book_card(rec, unique_idx, cover_url, query_text=query)
+
+        with tab2:
+            st.markdown('<div class="search-container">', unsafe_allow_html=True)
+            st.markdown("### Browse Books by Collection")
             
-            if selected_genres:
-                filtered = [
-                    rec for rec in filtered
-                    if rec.get('genres') and any(g in rec.get('genres', '') for g in selected_genres)
-                ]
+            # Load cluster data
+            clusters_arr, cluster_names, book_data_with_clusters = load_cluster_data()
 
-            # Results header
+            # Prepare options for selectbox: cluster name (size)
+            cluster_options = [
+                f"{name} ({np.sum(clusters_arr == cluster_id)} books)" 
+                for cluster_id, name in cluster_names.items()
+            ]
+            
+            selected_cluster_option = st.selectbox(
+                "Select a Collection",
+                options=cluster_options,
+                index=0 # Default to first cluster
+            )
+
+            # Extract cluster_id from selected option
+            selected_cluster_id = int(list(cluster_names.keys())[cluster_options.index(selected_cluster_option)])
+            
+            # Filter books for the selected cluster
+            cluster_books_df = book_data_with_clusters[book_data_with_clusters['cluster_id'] == selected_cluster_id]
+            
             st.markdown(
-                f'<div class="results-header">✨ Found {len(filtered)} Perfect Books For You</div>',
+                f'<div class="results-header">📚 Books in {cluster_names[selected_cluster_id]}</div>',
                 unsafe_allow_html=True
             )
-            
-            if not filtered:
-                st.info("😕 No books match your current filters. Try adjusting them!")
-            else:
+
+            if not cluster_books_df.empty:
+                # Convert DataFrame rows to list of dicts for render_book_card
+                cluster_recs = cluster_books_df.to_dict(orient='records')
+                
                 # --- Batch-fetch covers for visible books ---
-                visible_recs = filtered[:12]
+                visible_recs = cluster_recs[:12]
                 with st.spinner("Loading book covers..."):
                     covers_dict = load_book_covers_batch(visible_recs)
 
                 # Display in rows of 4
-                for row_idx in range(0, min(len(filtered), 12), 4):
+                for row_idx in range(0, min(len(cluster_recs), 12), 4):
                     cols = st.columns(4, gap="medium")
                     
-                    for col_idx, rec in enumerate(filtered[row_idx:row_idx+4]):
+                    for col_idx, rec in enumerate(cluster_recs[row_idx:row_idx+4]):
                         with cols[col_idx]:
-                            # Generate unique index for Streamlit keys
-                            unique_idx = row_idx + col_idx
+                            unique_idx = f"cluster_{selected_cluster_id}_{row_idx + col_idx}" # Unique key for cluster books
                             cover_url = covers_dict.get(rec['title'], config.FALLBACK_COVER_URL)
-                            render_book_card(rec, unique_idx, cover_url)
+                            # For clustered books, similarity is not directly applicable, so pass a dummy
+                            render_book_card({**rec, 'similarity': 1.0}, unique_idx, cover_url) # Pass 1.0 similarity for display
+
+            else:
+                st.info("No books found in this collection.")
+            st.markdown('</div>', unsafe_allow_html=True)
     
     except Exception as e:
         st.error(f"Something went wrong: {str(e)}")
-        logging.error(f"Application error: {e}", exc_info=True)
+        logger.error(f"Application error: {e}", exc_info=True)
 
 if __name__ == "__main__":
     main()

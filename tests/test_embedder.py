@@ -5,9 +5,9 @@ import os
 import pandas as pd
 import numpy as np  # Changed from pickle
 import tempfile
-from src.data_processor import clean_and_prepare_data
-from src.embedder import generate_embeddings
-import src.config as config
+from src.book_recommender.data.processor import clean_and_prepare_data
+from src.book_recommender.ml.embedder import generate_embeddings
+import src.book_recommender.core.config as config
 
 class TestEmbedder(unittest.TestCase):
 

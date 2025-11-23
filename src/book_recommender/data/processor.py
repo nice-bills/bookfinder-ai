@@ -4,8 +4,8 @@ import os
 import logging
 import pandas as pd
 import ast
-from .utils import ensure_dir_exists
-from .exceptions import DataNotFoundError, FileProcessingError
+from book_recommender.utils import ensure_dir_exists
+from book_recommender.core.exceptions import DataNotFoundError, FileProcessingError
 
 # Use a module-specific logger
 logger = logging.getLogger(__name__)
@@ -51,6 +51,15 @@ def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     for col in expected_cols:
         df[col] = df[col].astype(str)
 
+    # --- Ensure 'id' column exists ---
+    if 'book_id' in df.columns:
+        df['id'] = df['book_id'].astype(str)
+        logger.info("Using 'book_id' as the unique identifier.")
+    else:
+        # If no explicit ID column, create one based on DataFrame index
+        df['id'] = df.index.astype(str)
+        logger.warning("No 'book_id' column found. Generated 'id' from DataFrame index.")
+    
     # Handle string-formatted lists (e.g., "['Fiction', 'Fantasy']")
     for col in ['genres', 'tags']:
         if col in df.columns:
@@ -148,7 +157,7 @@ def clean_and_prepare_data(raw_path: str, processed_path: str) -> pd.DataFrame:
 
 if __name__ == '__main__':
     import argparse
-    import config as config
+    import book_recommender.core.config as config
     
     # When running as a script, basic logging is not configured by default.
     # To see log output, set the LOG_LEVEL environment variable,

@@ -1,0 +1,70 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Install development dependencies as they include linters, formatters, etc.
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+
+    - name: Lint with ruff
+      run: |
+        ruff check .
+
+    - name: Format check with black
+      run: |
+        black --check .
+
+    - name: Type check with mypy
+      # Mypy can be quite strict, often requiring config or inline ignores.
+      # For now, we'll run it as a check.
+      run: |
+        mypy src/book_recommender/
+
+    - name: Security scan with safety
+      run: |
+        safety check -r requirements.txt
+
+    - name: Run tests with pytest
+      run: |
+        pytest --cov=src/book_recommender --cov-report=xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true
+        verbose: true
+
+    - name: Build Docker image
+      run: |
+        docker build -t bookfinder-app:${{ github.sha }} .
+        # You can add docker push commands here if you have a registry

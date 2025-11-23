@@ -25,9 +25,9 @@ COPY data/raw/ ./data/raw/
 
 # Run the scripts to prepare the data.
 # This creates books_cleaned.parquet in /app/data/processed/
-RUN python -m src.data_processor
+RUN python -m src.book_recommender.data.processor
 # This downloads the model to cache and creates book_embeddings.npy
-RUN python -m src.embedder
+RUN python -m src.book_recommender.ml.embedder
 
 
 # --- Stage 2: Final Image ---
@@ -55,7 +55,7 @@ COPY --from=builder /root/.cache /root/.cache
 COPY --from=builder /app/data/processed/ ./data/processed/
 
 # Copy the application source code
-COPY app.py .
+
 COPY src/ ./src/
 
 # Set the PATH to include our virtual environment
@@ -72,4 +72,4 @@ EXPOSE 8501
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
 # Define the command to run the app
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.runOnSave=false"]
+CMD ["streamlit", "run", "src/book_recommender/apps/main_app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.runOnSave=false"]
