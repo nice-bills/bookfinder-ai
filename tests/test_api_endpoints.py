@@ -36,11 +36,12 @@ class TestFastAPIEndpoints(unittest.TestCase):
             "title_lower": ["test book 1", "test book 2", "related test book 1", "unrelated book", "sci-fi classic"],
             "authors_lower": ["author a", "author b", "author a", "author c", "author d"],
             "combined_text": [
-                "test book 1 by author a. genres: fiction. description: description for book 1. tags: ",
-                "test book 2 by author b. genres: science fiction. description: description for book 2 with sci-fi themes. tags: ",
-                "related test book 1 by author a. genres: fiction. description: another book by author a. tags: ",
-                "unrelated book by author c. genres: fantasy. description: a magical adventure. tags: ",
-                "sci-fi classic by author d. genres: science fiction. description: deep space exploration. tags: ",
+                "test book 1 by author a. genres: fiction. " "description: description for book 1. tags: ",
+                "test book 2 by author b. genres: science fiction. "
+                "description: description for book 2 with sci-fi themes. tags: ",
+                "related test book 1 by author a. genres: fiction. " "description: another book by author a. tags: ",
+                "unrelated book by author c. genres: fantasy. " "description: a magical adventure. tags: ",
+                "sci-fi classic by author d. genres: science fiction. " "description: deep space exploration. tags: ",
             ],
             "cluster_id": [0, 1, 0, 2, 1],
         }

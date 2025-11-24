@@ -425,7 +425,9 @@ def render_search_section():
         "Describe the book you want",
         value=st.session_state.get("query", ""),
         height=100,
-        placeholder="Example: A science fiction novel about time travel with complex characters and philosophical themes...",
+        placeholder=(
+            "Example: A science fiction novel about time travel with " "complex characters and philosophical themes..."
+        ),
         label_visibility="collapsed",
     )
 

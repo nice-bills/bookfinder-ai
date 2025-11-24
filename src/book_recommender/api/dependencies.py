@@ -42,7 +42,9 @@ def get_recommender() -> BookRecommender:
     except FileNotFoundError as e:
         logger.error(f"Required data file not found: {e}")
         raise DataNotFoundError(
-            f"Could not find processed data or embeddings. Please ensure '{config.PROCESSED_DATA_PATH}' and '{config.EMBEDDINGS_PATH}' exist."
+            f"Could not find processed data or embeddings. "
+            f"Please ensure '{config.PROCESSED_DATA_PATH}' and "
+            f"'{config.EMBEDDINGS_PATH}' exist."
         )
     except Exception as e:
         logger.error(f"Error initializing BookRecommender: {e}")

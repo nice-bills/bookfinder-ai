@@ -137,7 +137,9 @@ if __name__ == "__main__":
         "id": "123",
         "title": "The Hitchhiker's Guide to the Galaxy",
         "authors": "Douglas Adams",
-        "description": "A comedic science fiction series with philosophical undertones about a man travelling through space.",
+        "description": (
+            "A comedic science fiction series with philosophical undertones " "about a man travelling through space."
+        ),
         "genres": "Science Fiction, Comedy, Absurdist",
         "tags": "space, aliens, artificial intelligence, robots, philosophy",
         "rating": 4.5,
