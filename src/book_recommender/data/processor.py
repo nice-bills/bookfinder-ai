@@ -1,15 +1,12 @@
-# src/data_processor.py
-
 import ast
 import logging
 import os
 
 import pandas as pd
 
-from book_recommender.core.exceptions import DataNotFoundError, FileProcessingError
-from book_recommender.utils import ensure_dir_exists
+from src.book_recommender.core.exceptions import DataNotFoundError, FileProcessingError
+from src.book_recommender.utils import ensure_dir_exists
 
-# Use a module-specific logger
 logger = logging.getLogger(__name__)
 
 
@@ -40,54 +37,42 @@ def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     logger.info("Starting data cleaning and preparation...")
     logger.info(f"Found columns in CSV: {df.columns.tolist()}")
 
-    # Handle potential missing columns
     expected_cols = ["title", "authors", "genres", "description", "tags"]
     for col in expected_cols:
         if col not in df.columns:
             df[col] = ""
             logger.warning(f"Column '{col}' not found in CSV. Initializing as empty.")
 
-    # Fill NaN values with empty strings
     df[expected_cols] = df[expected_cols].fillna("")
 
-    # Ensure all text columns are of string type
     for col in expected_cols:
         df[col] = df[col].astype(str)
 
-    # --- Ensure 'id' column exists ---
     if "book_id" in df.columns:
         df["id"] = df["book_id"].astype(str)
         logger.info("Using 'book_id' as the unique identifier.")
     else:
-        # If no explicit ID column, create one based on DataFrame index
         df["id"] = df.index.astype(str)
         logger.warning("No 'book_id' column found. Generated 'id' from DataFrame index.")
 
-    # Handle string-formatted lists (e.g., "['Fiction', 'Fantasy']")
     for col in ["genres", "tags"]:
         if col in df.columns:
-            # Safely evaluate the string representation of a list
             df[col] = df[col].apply(
                 lambda x: ", ".join(ast.literal_eval(x)) if (x.startswith("[") and x.endswith("]")) else x
             )
 
-    # Store original case for display, create lowercase for processing
     df["title_lower"] = df["title"].str.strip().str.lower()
     df["authors_lower"] = df["authors"].str.strip().str.lower()
 
-    # Strip whitespace and lowercase other text fields
     for col in ["genres", "description", "tags"]:
         df[col] = df[col].str.strip().str.lower()
 
-    # --- Deduplication ---
     original_rows = len(df)
-    # Use the lowercased title for deduplication
     df.drop_duplicates(subset=["title_lower"], keep="first", inplace=True)
     new_rows = len(df)
     if new_rows < original_rows:
         logger.info(f"Removed {original_rows - new_rows} duplicate books based on title.")
 
-    # Ensure title is not empty
     original_rows = len(df)
     df.dropna(subset=["title_lower"], inplace=True)
     df = df[df["title_lower"] != ""].copy()
@@ -100,10 +85,9 @@ def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
             "No valid books found after processing. The dataset might be empty or contain only invalid entries."
         )
 
-    # --- Feature Engineering ---
     logger.info("Creating 'combined_text' for embeddings with weighted fields...")
     df["combined_text"] = (
-        (df["title_lower"] + " ") * 3  # Triple weight for title
+        (df["title_lower"] + " ") * 3
         + "by "
         + df["authors_lower"]
         + ". "
@@ -156,7 +140,6 @@ def clean_and_prepare_data(raw_path: str, processed_path: str) -> pd.DataFrame:
 
     processed_df = process_dataframe(raw_df)
 
-    # --- Save Processed Data ---
     try:
         ensure_dir_exists(processed_path)
         logger.info(f"Saving processed data to {processed_path}...")
@@ -174,15 +157,9 @@ if __name__ == "__main__":
 
     import book_recommender.core.config as config
 
-    # When running as a script, basic logging is not configured by default.
-    # To see log output, set the LOG_LEVEL environment variable,
-    # e.g., `export LOG_LEVEL=INFO` or run with `python -m logging ...`
-    # For simplicity, we'll add a basic config here if needed for debugging.
     if os.getenv("LOG_LEVEL"):
         logging.basicConfig(level=os.getenv("LOG_LEVEL"))
     else:
-        # Provide a default configuration if the script is run directly
-        # and no environment variable is set, to ensure messages are not lost.
         logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
     parser = argparse.ArgumentParser(description="Clean and prepare book data.")

@@ -1,10 +1,8 @@
-# scripts/download_model.py
 import os
 import sys
 
 from sentence_transformers import SentenceTransformer
 
-# Add src to path to import config
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from src import config
 

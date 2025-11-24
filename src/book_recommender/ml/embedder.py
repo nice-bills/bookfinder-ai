@@ -11,7 +11,6 @@ from sentence_transformers import SentenceTransformer
 import src.book_recommender.core.config as config
 from src.book_recommender.core.exceptions import DataNotFoundError, ModelLoadError
 
-# Use a module-specific logger
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +67,6 @@ def generate_embeddings(
     """
     model = _load_model(model_name)
 
-    # --- Generate Embeddings ---
     logger.info(f"Generating embeddings for {len(df)} books...")
     try:
         embeddings = model.encode(
@@ -79,7 +77,7 @@ def generate_embeddings(
         logger.error(f"Failed to generate embeddings: {e}")
         raise
 
-    return embeddings
+    return np.asarray(embeddings)
 
 
 def generate_embedding_for_query(query: str, model_name: str = config.EMBEDDING_MODEL) -> np.ndarray:
@@ -96,7 +94,7 @@ def generate_embedding_for_query(query: str, model_name: str = config.EMBEDDING_
     model = _load_model(model_name)
     logger.info(f"Generating embedding for query: '{query[:50]}...'")
     embedding = model.encode(query, show_progress_bar=False)
-    return embedding
+    return np.asarray(embedding)
 
 
 if __name__ == "__main__":
@@ -104,7 +102,6 @@ if __name__ == "__main__":
     import json
     import sys
 
-    # Add project root to path to allow absolute imports
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from src.book_recommender.core import config as config_main
     from src.book_recommender.core.exceptions import DataNotFoundError
@@ -158,7 +155,6 @@ if __name__ == "__main__":
 
     logger.info("--- Starting Embedding Generation Standalone Script ---")
 
-    # 1. Load Data
     if not os.path.exists(args.processed_path):
         logger.error(f"Processed data file not found at: {args.processed_path}")
         raise DataNotFoundError(f"Processed data file not found at: {args.processed_path}")
@@ -166,7 +162,6 @@ if __name__ == "__main__":
     logger.info(f"Loading processed data from {args.processed_path}...")
     processed_df = pd.read_parquet(args.processed_path)
 
-    # 2. Generate Embeddings
     embeddings_array = generate_embeddings(
         df=processed_df,
         model_name=args.model_name,
@@ -174,14 +169,12 @@ if __name__ == "__main__":
         batch_size=args.batch_size,
     )
 
-    # 3. Save Embeddings and Metadata
     try:
         ensure_dir_exists_main(args.embeddings_path)
         logger.info(f"Saving embeddings to {args.embeddings_path}...")
         np.save(args.embeddings_path, embeddings_array)
         logger.info("Embeddings saved successfully.")
 
-        # Save metadata
         metadata = {
             "model_name": args.model_name,
             "embedding_dimension": config_main.EMBEDDING_DIMENSION,

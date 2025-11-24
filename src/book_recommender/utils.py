@@ -1,5 +1,3 @@
-# src/utils.py - IMPROVED
-
 import logging
 import os
 import urllib.parse
@@ -12,11 +10,10 @@ import streamlit as st
 
 logger = logging.getLogger(__name__)
 
-# Multiple placeholder options
 PLACEHOLDER_IMAGES = [
-    "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=450&fit=crop",  # Book stack
-    "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=450&fit=crop",  # Open book
-    "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&h=450&fit=crop",  # Books
+    "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=300&h=450&fit=crop",
+    "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=450&fit=crop",
+    "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&h=450&fit=crop",
 ]
 
 
@@ -41,17 +38,14 @@ def get_cover_url_multi_source(title: str, author: str) -> str:
     2. Open Library API
     3. Beautiful placeholder from Unsplash
     """
-    # Try Google Books first
     cover = _get_cover_from_google_books(title, author)
     if cover:
         return cover
 
-    # Try Open Library
     cover = _get_cover_from_openlibrary(title, author)
     if cover:
         return cover
 
-    # Return beautiful placeholder
     import random
 
     return random.choice(PLACEHOLDER_IMAGES)
@@ -74,11 +68,9 @@ def _get_cover_from_google_books(title: str, author: str) -> Optional[str]:
                 volume_info = items[0]["volumeInfo"]
                 image_links = volume_info.get("imageLinks", {})
 
-                # Try to get the largest available image
                 for size in ["large", "medium", "small", "thumbnail", "smallThumbnail"]:
                     if size in image_links:
                         cover_url: str = image_links[size]
-                        # Force HTTPS
                         cover_url = cover_url.replace("http://", "https://")
                         logger.info(f"Found Google Books cover for '{title}'")
                         return cover_url
@@ -129,11 +121,9 @@ def load_book_covers_batch(books):
         for future in futures:
             book = futures[future]
             try:
-                # Use a unique key for each book, like its title
                 results[book["title"]] = future.result()
             except Exception as e:
                 logger.error(f"Error loading cover for {book['title']}: {e}")
-                # Assign a placeholder if fetching fails
                 results[book["title"]] = PLACEHOLDER_IMAGES[0]
 
         return results

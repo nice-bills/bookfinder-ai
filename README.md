@@ -1,10 +1,10 @@
-# 📘 BookFinder-AI
+# BookFinder-AI
 ![Build Status](https://github.com/your-username/your-repo-name/actions/workflows/ci-cd.yml/badge.svg)
 [![Codecov](https://codecov.io/gh/your-username/your-repo-name/branch/main/graph/badge.svg?token=your-codecov-token)](https://codecov.io/gh/your-username/your-repo-name)
 
 This project is a Content-Based Book Recommender MVP built using a 100% open-source Python stack. It uses sentence embeddings to find books with similar content and provides a simple, modern web interface to discover books based on a text description.
 
-## ✨ Features
+## Features
 
 -   **Semantic Search**: Instead of selecting a title, describe the book you want to read, and the recommender will find matching books based on semantic meaning.
 -   **Content-Based Recommendations**: Finds similar books using semantic meaning, not just keywords.
@@ -13,7 +13,7 @@ This project is a Content-Based Book Recommender MVP built using a 100% open-sou
 -   **Modular & Extendable**: Code is organized into a proper Python package (`src/book_recommender`), making it easy to extend.
 -   **Automated Setup**: The data processing and embedding generation can be run with simple commands.
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 - **Python 3.12+**
 - **Streamlit**: For the web application UI.
@@ -27,7 +27,7 @@ This project is a Content-Based Book Recommender MVP built using a 100% open-sou
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 The project is organized into a modular `src` layout:
 
@@ -57,7 +57,7 @@ bookfinder-ai/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Prerequisites
 
@@ -121,7 +121,7 @@ You can run each service using the provided batch scripts (for Windows).
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 Ensure your virtual environment is activated and dependencies are installed.
 
@@ -135,7 +135,7 @@ This sets the `TESTING_ENV` variable to prevent the app from loading real models
 
 ---
 
-## 🐳 Docker Compose Setup
+## Docker Compose Setup
 
 For a more production-like setup, you can use Docker Compose to build and run all services.
 
@@ -152,7 +152,7 @@ docker-compose down
 
 ---
 
-## ❓ Troubleshooting
+## Troubleshooting
 
 **1. `ModuleNotFoundError: No module named 'book_recommender'`**
    - **Cause**: The `src` directory is not on the `PYTHONPATH`.

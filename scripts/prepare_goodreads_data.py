@@ -1,12 +1,9 @@
-# scripts/prepare_goodreads_data.py
-
 import logging
 import os
 import sys
 
 import pandas as pd
 
-# Add parent directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -36,12 +33,10 @@ def prepare_goodreads_data():
         logger.info(f"Loaded {len(df)} books")
         logger.info(f"Original columns: {df.columns.tolist()}")
 
-        # Drop the unnamed index column if present
         if "Unnamed: 0" in df.columns or "" in df.columns:
             df = df.drop(columns=[col for col in df.columns if "Unnamed" in str(col) or col == ""])
             logger.info("Dropped unnamed index column")
 
-        # Rename columns to match expected format
         logger.info("Renaming columns...")
         df = df.rename(
             columns={
@@ -53,16 +48,11 @@ def prepare_goodreads_data():
             }
         )
 
-        # Create tags column from genres (or empty)
-        # Since genres are already descriptive, we can duplicate them to tags
-        # or leave empty for now
-        df["tags"] = ""  # Empty for now
+        df["tags"] = ""
         logger.info("Created 'tags' column (empty - can be populated later)")
 
-        # Select only the columns we need, in the right order
         columns_to_keep = ["title", "authors", "genres", "description", "tags", "rating"]
 
-        # Verify all columns exist
         missing_cols = [col for col in columns_to_keep if col not in df.columns]
         if missing_cols:
             logger.error(f"Missing columns after mapping: {missing_cols}")
@@ -71,22 +61,18 @@ def prepare_goodreads_data():
 
         df = df[columns_to_keep]
 
-        # Validate data
         logger.info(f"Final shape: {df.shape}")
         logger.info(f"Final columns: {df.columns.tolist()}")
         logger.info(f"Sample row:\n{df.iloc[0]}")
 
-        # Check for any completely null rows
         null_rows = df.isnull().all(axis=1).sum()
         if null_rows > 0:
             logger.warning(f"Found {null_rows} completely null rows - will be removed by processor")
 
-        # Save to new location
         logger.info(f"Saving prepared data to {output_path}...")
         df.to_csv(output_path, index=False)
         logger.info(f" Successfully prepared {len(df)} books")
 
-        # Print summary statistics
         logger.info("\n Dataset Summary:")
         logger.info(f"  Total books: {len(df)}")
         logger.info(f"  Books with ratings: {df['rating'].notna().sum()}")

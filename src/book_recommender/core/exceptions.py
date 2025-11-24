@@ -1,4 +1,3 @@
-# src/exceptions.py
 """Custom exception types for the book recommender application."""
 
 

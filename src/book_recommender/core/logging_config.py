@@ -2,57 +2,54 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 
+_logging_configured = False
+
 
 def configure_logging(
     log_file: str = "app.log",
     log_level: str = "INFO",
-    max_bytes: int = 5 * 1024 * 1024,  # 5 MB
+    max_bytes: int = 5 * 1024 * 1024,
     backup_count: int = 5,
     log_dir: str = "logs",
 ):
-    """
-    Configures application-wide logging.
+    """Configure application-wide logging with clean format."""
+    global _logging_configured
 
-    Logs to both console and a rotating file.
-
-    Args:
-        log_file (str): The name of the log file.
-        log_level (str): The minimum logging level to capture (e.g., "INFO", "DEBUG", "WARNING", "ERROR").
-        max_bytes (int): Maximum size of the log file before rotation (in bytes).
-        backup_count (int): Number of backup log files to keep.
-        log_dir (str): Directory where log files will be stored.
-    """
-    # Ensure log directory exists
     os.makedirs(log_dir, exist_ok=True)
     log_path = os.path.join(log_dir, log_file)
 
-    # Root logger configuration
     root_logger = logging.getLogger()
     root_logger.setLevel(log_level)
 
-    # Clear existing handlers to prevent duplicate logs in case of re-configuration
     if root_logger.handlers:
         for handler in root_logger.handlers:
             root_logger.removeHandler(handler)
 
-    # Formatter
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter("%(asctime)s | %(levelname)-8s | %(name)-30s | %(message)s", datefmt="%H:%M:%S")
 
-    # Console Handler
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
+    console_handler.setLevel(log_level)
     root_logger.addHandler(console_handler)
 
-    # File Handler (rotating)
     file_handler = RotatingFileHandler(log_path, maxBytes=max_bytes, backupCount=backup_count, encoding="utf-8")
     file_handler.setFormatter(formatter)
     root_logger.addHandler(file_handler)
 
-    logging.info(f"Logging configured. Level: {log_level}, Log File: {log_path}")
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    logging.getLogger("sentence_transformers").setLevel(logging.WARNING)
+    logging.getLogger("transformers").setLevel(logging.WARNING)
+    logging.getLogger("torch").setLevel(logging.WARNING)
+    logging.getLogger("huggingface_hub").setLevel(logging.WARNING)
+    logging.getLogger("streamlit").setLevel(logging.ERROR)
+    logging.getLogger("watchfiles").setLevel(logging.WARNING)
+
+    if not _logging_configured:
+        root_logger.info(f"Logging configured | Level: {log_level} | File: {log_path}")
+        _logging_configured = True
 
 
 if __name__ == "__main__":
-    # Example usage if run directly
     configure_logging(log_file="test_app.log", log_level="DEBUG")
     logger = logging.getLogger(__name__)
     logger.debug("This is a debug message from logging_config.py")

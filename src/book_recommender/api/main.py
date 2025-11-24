@@ -1,5 +1,7 @@
 import logging
-import os  # Import os to get environment variables for log level
+import os
+import time
+import warnings
 from contextlib import asynccontextmanager
 from typing import Dict, List
 
@@ -36,10 +38,12 @@ from src.book_recommender.ml.explainability import explain_recommendation
 from src.book_recommender.ml.feedback import get_all_feedback, save_feedback
 from src.book_recommender.ml.recommender import BookRecommender
 
-# Configure logging at the very beginning
+warnings.filterwarnings("ignore", message="resume_download is deprecated")
+warnings.filterwarnings("ignore", category=FutureWarning, module="huggingface_hub")
+
 configure_logging(log_file="api.log", log_level=os.getenv("LOG_LEVEL", "INFO"))
 
-logger = logging.getLogger(__name__)  # Now this logger will use the configured settings
+logger = logging.getLogger(__name__)
 
 IS_TESTING = os.getenv("TESTING_ENV", "False").lower() == "true"
 
@@ -54,22 +58,41 @@ def log_exception(e: Exception):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Load the ML models
+    """Lifecycle manager with startup timing"""
     if not IS_TESTING:
-        logger.info("Application startup: Pre-loading recommender and embedding model...")
+        logger.info("=" * 30)
+        logger.info("Starting BookFinder API...")
+        logger.info("=" * 30)
+
+        start_time = time.time()
+
         try:
+            t0 = time.time()
             get_recommender()
+            logger.info(f"Recommender loaded in {time.time() - t0:.1f}s")
+
+            t0 = time.time()
             get_sentence_transformer_model()
-            get_clusters_data()  # Also pre-load cluster data
-            logger.info("Recommender, embedding model, and cluster data pre-loaded successfully.")
+            logger.info(f"Model loaded in {time.time() - t0:.1f}s")
+
+            t0 = time.time()
+            get_clusters_data()
+            logger.info(f"Clusters loaded in {time.time() - t0:.1f}s")
+
+            total_time = time.time() - start_time
+            logger.info("=" * 30)
+            logger.info(f"API ready in {total_time:.1f}s | http://0.0.0.0:9696")
+            logger.info("=" * 30)
+
         except Exception as e:
-            log_exception(e)
+            logger.error(f"Startup failed: {e}")
             raise
     else:
-        logger.info("TESTING_ENV is true. Skipping startup model loading.")
+        logger.info("Test mode - skipping model loading")
+
     yield
-    # Clean up the ML models and release the resources
-    logger.info("Application shutdown: Cleaning up resources.")
+
+    logger.info("Shutting down BookFinder API...")
 
 
 app = FastAPI(
@@ -80,15 +103,14 @@ app = FastAPI(
 )
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, lambda request, exc: _rate_limit_exceeded_handler(request, exc))
 
-# CORS Middleware for allowing cross-origin requests
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -111,15 +133,10 @@ async def health_check(request: Request):
     Checks the health of the API and its core components.
     """
     try:
-        # Attempt to get the recommender to ensure it's loaded and functional
         _ = get_recommender()
-        # You could add a more robust check here, e.g., recommender.index.is_ready()
 
-        # Attempt to get the model to ensure it's loaded and functional
         _ = get_sentence_transformer_model()
-        # You could add a more robust check here, e.g., model.is_ready()
 
-        # Attempt to get cluster data to ensure it's loaded and functional
         get_clusters_data()
 
         return {"status": "OK", "message": "BookFinder API is healthy and core services are loaded."}
@@ -150,7 +167,6 @@ async def recommend_by_query(
     try:
         query_embedding = model.encode(body.query, show_progress_bar=False)
         recommendations = recommender.get_recommendations_from_vector(query_embedding, top_k=body.top_k)
-        # Map recommender output to RecommendationResult model
         results = []
         for rec in recommendations:
             book = Book(
@@ -159,7 +175,7 @@ async def recommend_by_query(
                 authors=(rec.get("authors", "").split(", ") if isinstance(rec.get("authors"), str) else []),
                 description=rec.get("description"),
                 genres=(rec.get("genres", "").split(", ") if isinstance(rec.get("genres"), str) else []),
-                cover_image_url=rec.get("cover_image_url"),  # Assuming cover_image_url might be in recommender output
+                cover_image_url=rec.get("cover_image_url"),
             )
             results.append(RecommendationResult(book=book, similarity_score=rec["similarity"]))
         return results
@@ -195,7 +211,6 @@ async def recommend_by_title(
                 detail=f"Book with title '{body.title}' not found or no recommendations met the similarity threshold.",
             )
 
-        # Map recommender output to RecommendationResult model
         results = []
         for rec in recommendations:
             book = Book(
@@ -204,13 +219,13 @@ async def recommend_by_title(
                 authors=(rec.get("authors", "").split(", ") if isinstance(rec.get("authors"), str) else []),
                 description=rec.get("description"),
                 genres=(rec.get("genres", "").split(", ") if isinstance(rec.get("genres"), str) else []),
-                cover_image_url=rec.get("cover_image_url"),  # Assuming cover_image_url might be in recommender output
+                cover_image_url=rec.get("cover_image_url"),
             )
             results.append(RecommendationResult(book=book, similarity_score=rec["similarity"]))
         return results
     except DataNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-    except HTTPException:  # Re-raise HTTPExceptions created above
+    except HTTPException:
         raise
     except Exception as e:
         log_exception(e)
@@ -287,7 +302,6 @@ async def search_books(
     The search is case-insensitive.
     """
     try:
-        # Sanitize query
         sanitized_query = query.strip()
         if not sanitized_query:
             raise HTTPException(
@@ -297,7 +311,6 @@ async def search_books(
 
         all_books_df = recommender.book_data
 
-        # Case-insensitive search
         mask = (all_books_df["title_lower"].str.contains(sanitized_query.lower(), na=False)) | (
             all_books_df["authors_lower"].str.contains(sanitized_query.lower(), na=False)
         )
@@ -345,13 +358,9 @@ async def get_stats(request: Request, recommender: BookRecommender = Depends(get
         all_books_df = recommender.book_data
         total_books = len(all_books_df)
 
-        # Genre counts
-        # Assuming genres are comma-separated strings
         all_genres = all_books_df["genres"].str.lower().str.split(", ").explode().dropna()
         genres_count = all_genres.value_counts().to_dict()
 
-        # Author counts
-        # Assuming authors are comma-separated strings
         all_authors = all_books_df["authors"].str.lower().str.split(", ").explode().dropna()
         authors_count = all_authors.value_counts().to_dict()
 
@@ -366,9 +375,6 @@ async def get_stats(request: Request, recommender: BookRecommender = Depends(get
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Internal server error while fetching statistics.",
         )
-
-
-# --- Cluster Endpoints ---
 
 
 @app.get(
@@ -392,11 +398,8 @@ async def list_clusters(
         for cluster_id, name in cluster_names.items():
             cluster_books_df = book_data_with_clusters[book_data_with_clusters["cluster_id"] == cluster_id]
 
-            # Get a sample of top books (e.g., 3 random books)
             sample_books = []
             if not cluster_books_df.empty:
-                # Take a random sample or top 3 books by some criteria
-                # For simplicity, let's take up to 3 random books
                 sample_recs = cluster_books_df.sample(min(len(cluster_books_df), 3)).to_dict(orient="records")
                 for rec in sample_recs:
                     sample_books.append(
@@ -474,7 +477,7 @@ async def get_books_in_cluster(
 
         return BookSearchResult(books=books, total=total_books, page=page, page_size=page_size)
     except HTTPException:
-        raise  # Re-raise HTTPExceptions
+        raise
     except Exception as e:
         log_exception(e)
         raise HTTPException(
@@ -510,9 +513,8 @@ async def get_cluster_sample(
         cluster_books_df = book_data_with_clusters[book_data_with_clusters["cluster_id"] == cluster_id]
 
         if cluster_books_df.empty:
-            return []  # Return empty list if cluster is empty
+            return []
 
-        # Take a random sample
         sample_df = cluster_books_df.sample(min(len(cluster_books_df), sample_size))
 
         books = []
@@ -529,7 +531,7 @@ async def get_cluster_sample(
 
         return books
     except HTTPException:
-        raise  # Re-raise HTTPExceptions
+        raise
     except Exception as e:
         log_exception(e)
         raise HTTPException(
@@ -550,8 +552,6 @@ async def explain_recommendation_endpoint(request: Request, body: ExplainRecomme
     based on a user query and the book's attributes.
     """
     try:
-        # The explain_recommendation function expects a dictionary for the book,
-        # so we convert the Pydantic model to a dictionary.
         book_dict = body.recommended_book.model_dump()
 
         explanation = explain_recommendation(
@@ -566,9 +566,6 @@ async def explain_recommendation_endpoint(request: Request, body: ExplainRecomme
         )
 
 
-# --- Feedback Endpoints ---
-
-
 @app.post(
     "/feedback",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -578,13 +575,12 @@ async def explain_recommendation_endpoint(request: Request, body: ExplainRecomme
 async def submit_feedback(
     request: Request,
     body: FeedbackRequest,
-    recommender: BookRecommender = Depends(get_recommender),  # Use recommender to get full book details if needed
+    recommender: BookRecommender = Depends(get_recommender),
 ):
     """
     Allows users to submit positive or negative feedback on a book recommendation.
     """
     try:
-        # Fetch book details using book_id from the recommender's book_data
         book_details_df = recommender.book_data[recommender.book_data["id"] == body.book_id]
         if book_details_df.empty:
             raise HTTPException(

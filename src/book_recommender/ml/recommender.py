@@ -1,5 +1,3 @@
-# src/recommender.py
-
 import logging
 import os
 from typing import Dict, List, Optional
@@ -10,7 +8,6 @@ import pandas as pd
 
 import src.book_recommender.core.config as config
 
-# Use a module-specific logger
 logger = logging.getLogger(__name__)
 
 
@@ -36,16 +33,13 @@ class BookRecommender:
             raise ValueError("Mismatch between number of books and number of embeddings.")
 
         self.book_data = book_data
-        self.embeddings = embeddings.astype("float32")  # FAISS requires float32
+        self.embeddings = embeddings.astype("float32")
 
-        # Normalize embeddings for cosine similarity search with FAISS
         faiss.normalize_L2(self.embeddings)
 
-        # Build the FAISS index for fast similarity search
         self.index = faiss.IndexFlatL2(config.EMBEDDING_DIMENSION)
         self.index.add(self.embeddings)
 
-        # Create a title-to-index mapping for fast lookups
         self.title_to_index = pd.Series(self.book_data.index, index=self.book_data["title_lower"]).to_dict()
         logger.info(f"Recommender initialized with FAISS index containing {self.index.ntotal} vectors.")
 
@@ -142,31 +136,23 @@ class BookRecommender:
 if __name__ == "__main__":
     import sys
 
-    # Add project root to path to allow absolute imports
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from src.book_recommender.core import config as config_main
 
-    # Example usage of the recommender
-
-    # Configure logging only when run as a script
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-    # Ensure data exists. In a real app, you'd run these scripts in order.
     if not (os.path.exists(config_main.PROCESSED_DATA_PATH) and os.path.exists(config_main.EMBEDDINGS_PATH)):
         print("Processed data or embeddings not found.")
         print("Please run 'python src/data_processor.py' and 'python src/embedder.py' first.")
     else:
-        # Load the data from disk
         logger.info(f"Loading book metadata from {config_main.PROCESSED_DATA_PATH}...")
         book_data_df = pd.read_parquet(config_main.PROCESSED_DATA_PATH)
 
         logger.info(f"Loading book embeddings from {config_main.EMBEDDINGS_PATH}...")
         embeddings_arr = np.load(config_main.EMBEDDINGS_PATH)
 
-        # Initialize the recommender with the loaded data
         recommender = BookRecommender(book_data=book_data_df, embeddings=embeddings_arr)
 
-        # Get a book title to test with (use the first one from the dataset)
         book_titles = recommender.book_data["title"].tolist()
         if book_titles:
             test_title = book_titles[0]

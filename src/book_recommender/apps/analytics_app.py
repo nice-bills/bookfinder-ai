@@ -8,7 +8,6 @@ import streamlit as st
 from src.book_recommender.core.logging_config import configure_logging
 from src.book_recommender.ml.feedback import get_all_feedback
 
-# Configure logging at the very beginning
 configure_logging(log_file="analytics.log", log_level=os.getenv("LOG_LEVEL", "INFO"))
 logger = logging.getLogger(__name__)
 
@@ -16,7 +15,7 @@ st.set_page_config(
     page_title="BookFinder Analytics Dashboard", page_icon="📊", layout="wide", initial_sidebar_state="collapsed"
 )
 
-st.title("📊 BookFinder Analytics Dashboard")
+st.title("BookFinder Analytics Dashboard")
 
 
 @st.cache_data
@@ -40,7 +39,6 @@ feedback_df = load_feedback_data()
 if feedback_df.empty:
     st.info("No feedback data available yet to display analytics.")
 else:
-    # --- Key Metrics ---
     st.header("Key Metrics")
     total_feedback = len(feedback_df)
     positive_feedback = len(feedback_df[feedback_df["feedback"] == "positive"])
@@ -59,7 +57,6 @@ else:
 
     st.markdown("---")
 
-    # --- Feedback Over Time ---
     st.header("Feedback Over Time")
     feedback_by_date = feedback_df.groupby(["date", "feedback"]).size().unstack(fill_value=0)
     fig_time = px.line(
@@ -74,7 +71,6 @@ else:
 
     st.markdown("---")
 
-    # --- Top Queries ---
     st.header("Top Queries")
     top_queries = feedback_df["query"].value_counts().reset_index()
     top_queries.columns = ["Query", "Count"]
@@ -90,10 +86,8 @@ else:
 
     st.markdown("---")
 
-    # --- Most Liked/Disliked Books ---
     st.header("Most Liked / Disliked Books")
 
-    # Aggregate feedback by book title and type
     book_feedback_counts = feedback_df.groupby(["book_title", "feedback"]).size().unstack(fill_value=0)
     book_feedback_counts["net_positive"] = book_feedback_counts.get("positive", 0) - book_feedback_counts.get(
         "negative", 0
@@ -126,7 +120,6 @@ else:
 
     st.markdown("---")
 
-    # --- Raw Feedback (Optional) ---
     if st.checkbox("Show Raw Feedback Data"):
         st.subheader("Raw Feedback Data")
         st.dataframe(feedback_df)
@@ -134,7 +127,7 @@ else:
 
 def main():
     """Entry point for analytics dashboard"""
-    pass  # Streamlit runs the script automatically
+    pass
 
 
 if __name__ == "__main__":

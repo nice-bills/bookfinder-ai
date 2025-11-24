@@ -56,12 +56,12 @@ class BookCluster(BaseModel):
     id: int
     name: str
     size: int
-    top_books: List[Book]  # Sample top books in the cluster
+    top_books: List[Book]
 
 
 class ExplainRecommendationRequest(BaseModel):
     query_text: str = Field(..., json_schema_extra={"example": "A fantasy novel with dragons"})
-    recommended_book: Book  # Reuse the Book model
+    recommended_book: Book
     similarity_score: float = Field(..., ge=0.0, le=1.0)
 
 
@@ -69,7 +69,7 @@ class ExplanationResponse(BaseModel):
     match_score: int
     confidence: str
     summary: str
-    details: Dict[str, int]  # Assuming details are contribution percentages
+    details: Dict[str, int]
 
 
 class FeedbackRequest(BaseModel):
@@ -87,7 +87,7 @@ class FeedbackRequest(BaseModel):
         strip_whitespace=True,
         json_schema_extra={"example": "b1b2b3b4-b5b6-b7b8-b9b0-b1b2b3b4b5b6"},
     )
-    feedback_type: str = Field(..., pattern="^(positive|negative)$")  # "positive" or "negative"
+    feedback_type: str = Field(..., pattern="^(positive|negative)$")
     session_id: Optional[str] = Field(
         None,
         min_length=1,

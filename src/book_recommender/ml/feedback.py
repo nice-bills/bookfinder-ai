@@ -67,7 +67,6 @@ def get_all_feedback() -> List[Dict[str, Any]]:
 
 
 if __name__ == "__main__":
-    # Example usage
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     logger.info("--- Testing feedback system ---")
 
