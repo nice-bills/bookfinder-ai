@@ -4,6 +4,7 @@ import os
 import uuid
 from datetime import datetime
 from typing import Optional
+from contextlib import contextmanager
 
 import numpy as np
 import pandas as pd
@@ -37,6 +38,162 @@ logger = logging.getLogger(__name__)
 st.set_page_config(
     page_title="BookFinder - AI Book Recommendations", page_icon="📚", layout="wide", initial_sidebar_state="collapsed"
 )
+
+
+@contextmanager
+def custom_spinner(text="Loading..."):
+    """
+    A custom spinner that uses CSS/HTML for a better loading animation.
+    """
+    placeholder = st.empty()
+    placeholder.markdown(
+        f"""
+        <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem auto; /* Centered with consistent spacing */
+        ">
+            <div class="book-loader-small">
+                <div class="inner">
+                    <div class="left"></div>
+                    <div class="middle"></div>
+                    <div class="right"></div>
+                </div>
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+            <p style="
+                margin-top: 0.8rem;
+                font-size: 0.85rem;
+                color: #6b7280;
+                font-weight: 500;
+                font-family: 'Inter', sans-serif;
+                letter-spacing: 0.3px;
+                opacity: 0.8;
+                animation: text-pulse 2s infinite ease-in-out;
+            ">{text}</p>
+        </div>
+        <style>
+            .book-loader-small {{
+                --color: #667eea;
+                --duration: 6.8s;
+                width: 24px; /* Reduced from 32px */
+                height: 9px; /* Reduced from 12px */
+                position: relative;
+                margin: 0;
+            }}
+            .book-loader-small .inner {{
+                width: 24px;
+                height: 9px;
+                position: relative;
+                transform-origin: 1.5px 1.5px; /* Adjusted origin */
+                transform: rotateZ(-90deg);
+                animation: book var(--duration) ease infinite;
+            }}
+            .book-loader-small .inner .left,
+            .book-loader-small .inner .right {{
+                width: 45px; /* Reduced from 60px */
+                height: 3px; /* Reduced from 4px */
+                top: 0;
+                border-radius: 1.5px;
+                background: var(--color);
+                position: absolute;
+            }}
+            .book-loader-small .inner .left {{
+                right: 21px; /* Adjusted */
+                transform-origin: 43.5px 1.5px; /* Adjusted */
+                transform: rotateZ(90deg);
+                animation: left var(--duration) ease infinite;
+            }}
+            .book-loader-small .inner .right {{
+                left: 21px; /* Adjusted */
+                transform-origin: 1.5px 1.5px; /* Adjusted */
+                transform: rotateZ(-90deg);
+                animation: right var(--duration) ease infinite;
+            }}
+            .book-loader-small .inner .middle {{
+                width: 24px;
+                height: 9px;
+                border: 3px solid var(--color); /* Reduced border */
+                border-top: 0;
+                border-radius: 0 0 7px 7px;
+                transform: translateY(1.5px);
+            }}
+            .book-loader-small ul {{
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                position: absolute;
+                left: 50%;
+                top: 0;
+            }}
+            .book-loader-small ul li {{
+                height: 3px; /* Reduced from 4px */
+                border-radius: 1.5px;
+                transform-origin: 100% 1.5px; /* Adjusted */
+                width: 36px; /* Reduced from 48px */
+                right: 0;
+                top: -7.5px; /* Adjusted */
+                position: absolute;
+                background: var(--color);
+                transform: rotateZ(0deg) translateX(-13.5px); /* Adjusted */
+                animation-duration: var(--duration);
+                animation-timing-function: ease;
+                animation-iteration-count: infinite;
+            }}
+            .book-loader-small ul li:nth-child(1) {{ animation-name: page-1; }}
+            .book-loader-small ul li:nth-child(2) {{ animation-name: page-2; }}
+            .book-loader-small ul li:nth-child(3) {{ animation-name: page-3; }}
+            .book-loader-small ul li:nth-child(4) {{ animation-name: page-4; }}
+            .book-loader-small ul li:nth-child(5) {{ animation-name: page-5; }}
+            .book-loader-small ul li:nth-child(6) {{ animation-name: page-6; }}
+            .book-loader-small ul li:nth-child(7) {{ animation-name: page-7; }}
+            .book-loader-small ul li:nth-child(8) {{ animation-name: page-8; }}
+            .book-loader-small ul li:nth-child(9) {{ animation-name: page-9; }}
+            .book-loader-small ul li:nth-child(10) {{ animation-name: page-10; }}
+            .book-loader-small ul li:nth-child(11) {{ animation-name: page-11; }}
+            .book-loader-small ul li:nth-child(12) {{ animation-name: page-12; }}
+            
+            @keyframes page-1 {{ 4% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 13%, 54% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 63% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-2 {{ 9% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 18%, 59% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 68% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-3 {{ 14% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 23%, 64% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 73% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-4 {{ 19% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 28%, 69% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 78% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-5 {{ 24% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 33%, 74% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 83% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-6 {{ 29% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 38%, 79% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 88% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-7 {{ 34% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 43%, 84% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 93% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-8 {{ 39% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 48%, 89% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 98% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-9 {{ 44% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 53%, 94% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 100% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-10 {{ 49% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 58%, 99% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 100% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-11 {{ 54% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 63% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 100% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            @keyframes page-12 {{ 59% {{ transform: rotateZ(0deg) translateX(-13.5px); }} 68% {{ transform: rotateZ(180deg) translateX(-13.5px); }} 100% {{ transform: rotateZ(0deg) translateX(-13.5px); }} }}
+            
+            @keyframes left {{ 4% {{ transform: rotateZ(90deg); }} 10%, 40% {{ transform: rotateZ(0deg); }} 46%, 54% {{ transform: rotateZ(90deg); }} 60%, 90% {{ transform: rotateZ(0deg); }} 96% {{ transform: rotateZ(90deg); }} }}
+            @keyframes right {{ 4% {{ transform: rotateZ(-90deg); }} 10%, 40% {{ transform: rotateZ(0deg); }} 46%, 54% {{ transform: rotateZ(-90deg); }} 60%, 90% {{ transform: rotateZ(0deg); }} 96% {{ transform: rotateZ(-90deg); }} }}
+            @keyframes book {{ 4% {{ transform: rotateZ(-90deg); }} 10%, 40% {{ transform: rotateZ(0deg); transform-origin: 1.5px 1.5px; }} 40.01%, 59.99% {{ transform-origin: 22.5px 1.5px; }} 46%, 54% {{ transform: rotateZ(90deg); }} 60%, 90% {{ transform: rotateZ(0deg); transform-origin: 1.5px 1.5px; }} 96% {{ transform: rotateZ(-90deg); }} }}
+            @keyframes text-pulse {{ 0%, 100% {{ opacity: 0.5; }} 50% {{ opacity: 1; }} }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    try:
+        yield
+    finally:
+        placeholder.empty()
+
 
 st.markdown(
     """
@@ -114,13 +271,7 @@ st.markdown(
     }
 
     /* Book Card wrapper and structure */
-    .book-card-wrapper {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .book-card {
+    .book-card-container {
         background: white;
         border-radius: 15px;
         padding: 1.5rem;
@@ -129,44 +280,44 @@ st.markdown(
         display: flex;
         flex-direction: column;
         height: 100%;
-        flex: 1;
+        position: relative;
+        overflow: hidden;
     }
 
-    .book-card:hover {
+    .book-card-container:hover {
         transform: translateY(-8px);
         box-shadow: 0 12px 40px rgba(0,0,0,0.15);
     }
 
     /* Book cover with fixed aspect ratio */
-    .book-cover-container {
+    .book-cover-wrapper {
         position: relative;
         width: 100%;
-        padding-top: 150%; /* 2:3 book aspect ratio */
+        padding-top: 150%; /* 2:3 aspect ratio standard for books */
         overflow: hidden;
-        border-radius: 10px;
+        border-radius: 8px;
         margin-bottom: 1rem;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        flex-shrink: 0;
+        background-color: #f3f4f6; /* Placeholder background */
     }
 
-    .book-cover {
+    .book-cover-wrapper img {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
+        object-fit: cover; /* Ensures image covers the area without distortion */
+        object-position: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .book-card-container:hover .book-cover-wrapper img {
+        transform: scale(1.05);
     }
 
-    /* Content wrapper */
-    .book-content {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-    }
-
-    /* Info section that grows */
-    .book-info-section {
+    /* Info section */
+    .book-info {
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -178,43 +329,49 @@ st.markdown(
         color: white;
         padding: 0.4rem 1rem;
         border-radius: 20px;
-        font-size: 0.85rem;
+        font-size: 0.75rem;
         font-weight: 600;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
         width: fit-content;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    /* Fixed height elements for alignment */
+    /* Typography */
     .book-title {
-        font-size: 1.05rem;
-        font-weight: 600;
+        font-size: 1.1rem;
+        font-weight: 700;
         color: #1f2937;
-        margin-bottom: 0.5rem;
-        line-height: 1.4;
-        height: 2.8em; /* Exactly 2 lines */
-        overflow: hidden;
+        margin-bottom: 0.4rem;
+        line-height: 1.3;
+        /* Clamp to 2 lines */
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 2.8em; 
     }
 
     .book-author {
         font-size: 0.9rem;
         color: #6b7280;
         margin-bottom: 0.8rem;
-        height: 1.4em;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .rating-stars {
         color: #fbbf24;
-        font-size: 0.95rem;
+        font-size: 0.9rem;
         margin-bottom: 0.8rem;
-        height: 1.4em;
         display: flex;
         align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .rating-stars strong {
+        color: #4b5563;
+        font-weight: 600;
     }
 
     .genre-container {
@@ -222,21 +379,27 @@ st.markdown(
         flex-wrap: wrap;
         gap: 0.4rem;
         margin-bottom: 1rem;
-        min-height: 2.2rem;
-        max-height: 2.2rem;
+        height: 2.2rem; /* Fixed height for consistency */
         overflow: hidden;
-        align-content: flex-start;
     }
 
     .genre-pill {
-        display: inline-block;
         background: #f3f4f6;
         color: #4b5563;
         padding: 0.25rem 0.7rem;
         border-radius: 12px;
         font-size: 0.7rem;
         white-space: nowrap;
-        height: fit-content;
+    }
+
+    /* Actions area */
+    .card-actions {
+        margin-top: auto;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f3f4f6;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
 
     /* Actions pushed to bottom */
@@ -437,99 +600,86 @@ def render_search_section():
 
 def render_book_card(rec, index, cover_url, query_text: Optional[str] = None):
     """Render a beautiful book card with all details."""
-
-    st.markdown('<div class="book-card-wrapper">', unsafe_allow_html=True)
-    st.markdown('<div class="book-card">', unsafe_allow_html=True)
-
-    st.markdown(
-        f"""
-        <div class="book-cover-container">
-            <img class="book-cover" src="{cover_url}" alt="{rec['title']}">
-        </div>
-    """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown('<div class="book-content">', unsafe_allow_html=True)
-
-    st.markdown('<div class="book-info-section">', unsafe_allow_html=True)
-
-    if "similarity" in rec:
-        similarity_percent = rec["similarity"] * 100
-        st.markdown(f'<div class="similarity-badge">{similarity_percent:.0f}% Match</div>', unsafe_allow_html=True)
-
-    st.markdown(f'<div class="book-title">{rec["title"]}</div>', unsafe_allow_html=True)
-
-    author = rec.get("authors", "Unknown Author")
-    st.markdown(f'<div class="book-author">by {author}</div>', unsafe_allow_html=True)
-
+    
+    # Generate stars string
+    rating_html = '<div class="rating-stars">&nbsp;</div>'
     if rec.get("rating") and rec.get("rating") != "N/A" and pd.notna(rec["rating"]):
         try:
             rating = float(rec["rating"])
             stars = "⭐" * int(rating)
-            st.markdown(f"{stars} **{rating:.1f}/5**")
+            rating_html = f'<div class="rating-stars">{stars} <strong>{rating:.1f}/5</strong></div>'
         except Exception:
             pass
-    else:
-        st.markdown('<div class="rating-stars">&nbsp;</div>', unsafe_allow_html=True)
 
+    # Generate genres HTML
+    genres_html = '<div class="genre-container">&nbsp;</div>'
     if rec.get("genres") and isinstance(rec.get("genres"), str):
         genres = [g.strip() for g in rec["genres"].split(",")[:3]]
-        genre_html = '<div class="genre-container">'
-        for g in genres:
-            genre_html += f'<span class="genre-pill">{g.title()}</span>'
-        genre_html += "</div>"
-        st.markdown(genre_html, unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="genre-container">&nbsp;</div>', unsafe_allow_html=True)
+        pills = "".join([f'<span class="genre-pill">{g.title()}</span>' for g in genres])
+        genres_html = f'<div class="genre-container">{pills}</div>'
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    # Generate match badge
+    match_html = ""
+    if "similarity" in rec:
+        similarity_percent = rec["similarity"] * 100
+        match_html = f'<div class="similarity-badge">{similarity_percent:.0f}% Match</div>'
 
-    st.markdown('<div class="card-actions">', unsafe_allow_html=True)
+    # Single HTML block for the card content
+    card_html = f"""
+    <div class="book-card-container">
+        <div class="book-cover-wrapper">
+            <img src="{cover_url}" alt="{rec['title']}">
+        </div>
+        <div class="book-info">
+            {match_html}
+            <div class="book-title" title="{rec['title']}">{rec['title']}</div>
+            <div class="book-author">by {rec.get("authors", "Unknown Author")}</div>
+            {rating_html}
+            {genres_html}
+        </div>
+    </div>
+    """
+    st.markdown(card_html, unsafe_allow_html=True)
 
-    if rec.get("description"):
-        with st.expander("Read More"):
-            desc = rec["description"][:250] + "..." if len(rec["description"]) > 250 else rec["description"]
-            st.write(desc)
+    # Interactive elements (outside the HTML block)
+    with st.container():
+        if rec.get("description"):
+            with st.expander("Read More"):
+                desc = rec["description"][:250] + "..." if len(rec["description"]) > 250 else rec["description"]
+                st.write(desc)
 
-    if query_text and "similarity" in rec:
-        with st.expander("Why this recommendation?"):
-            from src.book_recommender.ml.explainability import (
-                explain_recommendation,
-            )
+        if query_text and "similarity" in rec:
+            with st.expander("Why this recommendation?"):
+                from src.book_recommender.ml.explainability import (
+                    explain_recommendation,
+                )
+                explanation = explain_recommendation(
+                    query_text=query_text, recommended_book=rec, similarity_score=rec["similarity"]
+                )
+                st.info(explanation["summary"])
+                if explanation.get("matching_features"):
+                    st.markdown("**Matching features:**")
+                    for feature in explanation["matching_features"]:
+                        st.markdown(f"• {feature}")
 
-            explanation = explain_recommendation(
-                query_text=query_text, recommended_book=rec, similarity_score=rec["similarity"]
-            )
-
-            st.info(explanation["summary"])
-
-            if explanation.get("matching_features"):
-                st.markdown("**Matching features:**")
-                for feature in explanation["matching_features"]:
-                    st.markdown(f"• {feature}")
-
-    if query_text:
-        col_a, col_b, col_c = st.columns([1, 1, 3])
-
-        with col_a:
-            if st.button("👍", key=f"like_{index}", help="Good recommendation", use_container_width=True):
-                save_feedback(query_text, rec, "positive", st.session_state.session_id)
-                st.toast(f"Thank you for your feedback on '{rec['title']}'!", icon="👍")
-        with col_b:
-            if st.button("👎", key=f"dislike_{index}", help="Not relevant", use_container_width=True):
-                save_feedback(query_text, rec, "negative", st.session_state.session_id)
-                st.toast(f"Thank you for your feedback on '{rec['title']}'!", icon="👎")
-        with col_c:
-            if st.button("View Details", key=f"details_{index}", width="stretch"):
+        st.markdown('<div class="card-actions">', unsafe_allow_html=True)
+        if query_text:
+            col_a, col_b, col_c = st.columns([1, 1, 3])
+            with col_a:
+                if st.button("👍", key=f"like_{index}", help="Good recommendation", use_container_width=True):
+                    save_feedback(query_text, rec, "positive", st.session_state.session_id)
+                    st.toast(f"Feedback saved!", icon="👍")
+            with col_b:
+                if st.button("👎", key=f"dislike_{index}", help="Not relevant", use_container_width=True):
+                    save_feedback(query_text, rec, "negative", st.session_state.session_id)
+                    st.toast(f"Feedback saved!", icon="👎")
+            with col_c:
+                if st.button("View Details", key=f"details_{index}", use_container_width=True):
+                    show_book_details(rec, query_text=query_text)
+        else:
+            if st.button("View Details", key=f"details_{index}", use_container_width=True):
                 show_book_details(rec, query_text=query_text)
-    else:
-        if st.button("View Details", key=f"details_{index}", width="stretch"):
-            show_book_details(rec, query_text=query_text)
-
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div></div>", unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 @st.dialog("Book Details")
@@ -638,7 +788,7 @@ def main():
 
             if (search_button and query.strip()) or (query and query != st.session_state.get("last_query", "")):
                 st.session_state.last_query = query
-                with st.spinner("Finding the perfect books for you..."):
+                with custom_spinner("Finding the perfect books for you..."):
                     query_embedding = generate_embedding_for_query(query)
                     st.session_state.recommendations = recommender.get_recommendations_from_vector(
                         query_embedding,
@@ -693,7 +843,7 @@ def main():
                     st.info("No books match your current filters. Try adjusting them!")
                 else:
                     visible_recs = filtered[:12]
-                    with st.spinner("Loading book covers..."):
+                    with custom_spinner("Loading book covers..."):
                         covers_dict = load_book_covers_batch(visible_recs)
 
                     for row_idx in range(0, min(len(filtered), 12), 4):
@@ -730,7 +880,7 @@ def main():
                 cluster_recs = cluster_books_df.to_dict(orient="records")
 
                 visible_recs = cluster_recs[:12]
-                with st.spinner("Loading book covers..."):
+                with custom_spinner("Loading book covers..."):
                     covers_dict = load_book_covers_batch(visible_recs)
 
                 for row_idx in range(0, min(len(cluster_recs), 12), 4):

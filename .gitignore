@@ -20,6 +20,7 @@ wheels/
 .installed.cfg
 *.egg
 
+
 # Virtual Environments
 .venv/
 venv/
@@ -72,3 +73,10 @@ htmlcov/
 docs/gemini.md
 scripts/Advanced Features To Consider.txt
 scripts/Book_Recommender_Project_SEC.txt
+
+.ruff_cache/
+.mypy_cache/
+
+run_analytics.bat
+run_api.bat
+run_app.bat

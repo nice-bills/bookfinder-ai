@@ -74,7 +74,10 @@ cd book-recommender
 ### 3. Create and Activate Virtual Environment
 
 ```bash
+uv init # To initialize the project
+
 uv venv
+
 source .venv/bin/activate  # macOS/Linux
 # or
 .venv\Scripts\Activate.ps1 # Windows PowerShell

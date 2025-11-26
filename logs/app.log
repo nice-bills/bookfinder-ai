@@ -1720,3 +1720,430 @@ book_recommender.core.exceptions.DataNotFoundError: Raw data file not found at: 
 22:02:49 | WARNING  | src.book_recommender.ml.recommender | Title 'non existent book' not found in the dataset.
 22:02:49 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 5 vectors.
 22:02:49 | INFO     | src.book_recommender.ml.recommender | Found 1 recommendations for 'beta book'.
+17:19:48 | INFO     | src.book_recommender.data.processor | Loading raw data from C:\Users\alnic\AppData\Local\Temp\tmpm6bfheag\test_books.csv...
+17:19:50 | INFO     | src.book_recommender.data.processor | Loaded 4 rows.
+17:19:51 | INFO     | src.book_recommender.data.processor | Starting data cleaning and preparation...
+17:19:51 | INFO     | src.book_recommender.data.processor | Found columns in CSV: ['title', 'authors', 'genres', 'description', 'tags']
+17:19:52 | WARNING  | src.book_recommender.data.processor | No 'book_id' column found. Generated 'id' from DataFrame index.
+17:19:52 | WARNING  | src.book_recommender.data.processor | Dropped 1 rows with missing titles.
+17:19:52 | INFO     | src.book_recommender.data.processor | Creating 'combined_text' for embeddings with weighted fields...
+17:19:52 | INFO     | src.book_recommender.data.processor | Saving processed data to C:\Users\alnic\AppData\Local\Temp\tmpm6bfheag\test_books_cleaned.parquet...
+17:19:53 | INFO     | src.book_recommender.data.processor | Successfully saved 3 processed rows.
+17:19:54 | INFO     | src.book_recommender.data.processor | Loading raw data from C:\Users\alnic\AppData\Local\Temp\tmp05axpyr6\test_books.csv...
+17:19:54 | INFO     | src.book_recommender.data.processor | Loaded 0 rows.
+17:19:54 | INFO     | src.book_recommender.data.processor | Starting data cleaning and preparation...
+17:19:54 | INFO     | src.book_recommender.data.processor | Found columns in CSV: ['title', 'authors', 'genres', 'description', 'tags']
+17:19:54 | WARNING  | src.book_recommender.data.processor | No 'book_id' column found. Generated 'id' from DataFrame index.
+17:19:54 | ERROR    | src.book_recommender.data.processor | DataFrame is empty after cleaning. No valid book data to process.
+17:19:54 | INFO     | src.book_recommender.data.processor | Loading raw data from C:\Users\alnic\AppData\Local\Temp\tmpp4dfp78u\test_books.csv...
+17:19:54 | ERROR    | src.book_recommender.data.processor | Failed to parse CSV from C:\Users\alnic\AppData\Local\Temp\tmpp4dfp78u\test_books.csv: Error tokenizing data. C error: EOF inside string starting at row 2
+17:19:54 | ERROR    | src.book_recommender.data.processor | Raw data file not found at: non_existent_file.csv
+17:19:54 | INFO     | src.book_recommender.data.processor | Loading raw data from C:\Users\alnic\AppData\Local\Temp\tmpjjad7qq1\test_books.csv...
+17:19:54 | INFO     | src.book_recommender.data.processor | Loaded 3 rows.
+17:19:54 | INFO     | src.book_recommender.data.processor | Starting data cleaning and preparation...
+17:19:54 | INFO     | src.book_recommender.data.processor | Found columns in CSV: ['title', 'authors', 'genres', 'description', 'tags']
+17:19:54 | WARNING  | src.book_recommender.data.processor | No 'book_id' column found. Generated 'id' from DataFrame index.
+17:19:54 | INFO     | src.book_recommender.data.processor | Creating 'combined_text' for embeddings with weighted fields...
+17:19:54 | INFO     | src.book_recommender.data.processor | Saving processed data to C:\Users\alnic\AppData\Local\Temp\tmpjjad7qq1\test_books_cleaned.parquet...
+17:19:54 | INFO     | src.book_recommender.data.processor | Successfully saved 3 processed rows.
+17:19:54 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+17:19:54 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B140C80>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: f87a0257-1aa9-4260-ba8e-70b83a0c7f40)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:19:54 | WARNING  | huggingface_hub.utils._http    | Retrying in 1s [Retry 1/5].
+17:19:55 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B1438F0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: c3007df6-eacd-47e9-8fbc-72bfd07a2c87)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:19:55 | WARNING  | huggingface_hub.utils._http    | Retrying in 2s [Retry 2/5].
+17:19:57 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B142540>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 6ccedbf8-926b-43d0-9462-798467703b46)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:19:57 | WARNING  | huggingface_hub.utils._http    | Retrying in 4s [Retry 3/5].
+17:20:01 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B142570>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: c81f821d-c13a-405d-bb7c-11bd3ca82989)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:20:01 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 4/5].
+17:20:09 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B1429F0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 98152324-5198-4e7a-8d38-cb5c4bf59f9c)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:20:09 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 5/5].
+17:20:17 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B1413A0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 93fdf1d7-58e5-41ed-bf3a-6f85dec7b597)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:20:17 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B1422A0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: ca04faf8-6596-4f57-a451-522449df874a)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json
+17:20:17 | WARNING  | huggingface_hub.utils._http    | Retrying in 1s [Retry 1/5].
+17:20:18 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B140D40>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: d75f8076-3f1d-4308-ab6f-2588a300ad60)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json
+17:20:18 | WARNING  | huggingface_hub.utils._http    | Retrying in 2s [Retry 2/5].
+17:20:20 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B141550>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: db4fc53c-e21f-4670-8f8c-0667de361767)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json
+17:20:20 | WARNING  | huggingface_hub.utils._http    | Retrying in 4s [Retry 3/5].
+17:20:24 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B141D60>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 99d27336-db2d-435e-9e1f-c32be24638f8)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json
+17:20:24 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 4/5].
+17:20:33 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B140DA0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: f1833dec-4640-4365-946d-888b4cbb46e1)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json
+17:20:33 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 5/5].
+17:20:41 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B14BF50>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 465b844f-31d7-4751-9159-9fe4fdbeb8f3)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config_sentence_transformers.json
+17:20:41 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B14BB30>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: b0cb681b-da4c-446a-adc5-44aa24e3d702)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md
+17:20:41 | WARNING  | huggingface_hub.utils._http    | Retrying in 1s [Retry 1/5].
+17:20:42 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B148B00>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 6466b797-1ed6-43b4-aafd-c91c5951b880)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md
+17:20:42 | WARNING  | huggingface_hub.utils._http    | Retrying in 2s [Retry 2/5].
+17:20:44 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B1486E0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: ff143b0b-52c9-4757-b132-3505e9d13b75)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md
+17:20:44 | WARNING  | huggingface_hub.utils._http    | Retrying in 4s [Retry 3/5].
+17:20:48 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B1482C0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: b77b7430-e582-47b8-b899-382eaf72dcd1)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md
+17:20:48 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 4/5].
+17:20:56 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B149BE0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 49120015-161a-4cc0-bfd5-ef6edc032426)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md
+17:20:56 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 5/5].
+17:21:04 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B140FB0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 16d6374c-1841-4702-9c95-7037869e7054)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/README.md
+17:21:04 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B141CA0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: c56c3850-a59c-4a22-afa4-3eefefb76d48)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:21:04 | WARNING  | huggingface_hub.utils._http    | Retrying in 1s [Retry 1/5].
+17:21:05 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B148470>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 540adaa8-549b-4dfb-bb93-c15f673f180c)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:21:05 | WARNING  | huggingface_hub.utils._http    | Retrying in 2s [Retry 2/5].
+17:21:07 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B1487A0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 5ae5b7ed-2801-4bfb-8f00-fff1ea5d7174)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:21:07 | WARNING  | huggingface_hub.utils._http    | Retrying in 4s [Retry 3/5].
+17:21:11 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B14ACC0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: f7febb14-0252-422c-81e2-52280da261af)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:21:11 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 4/5].
+17:21:19 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B14A690>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: ec0eba03-a6d3-484e-9dea-3f6d5846e64f)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:21:19 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 5/5].
+17:21:27 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B14BA70>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: ea683cf8-ccf5-4a89-b42f-e1bc41918726)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/modules.json
+17:21:27 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B149520>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 6eb5f2d0-2b01-41f9-abfd-6eed56774394)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json
+17:21:27 | WARNING  | huggingface_hub.utils._http    | Retrying in 1s [Retry 1/5].
+17:21:28 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B149100>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 4e8eeee6-b07b-4a68-ac1c-1d8769d0c456)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json
+17:21:28 | WARNING  | huggingface_hub.utils._http    | Retrying in 2s [Retry 2/5].
+17:21:30 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B12D820>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: f4c8ac5e-6f84-4fd0-bd4f-c81f93f2a23c)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json
+17:21:30 | WARNING  | huggingface_hub.utils._http    | Retrying in 4s [Retry 3/5].
+17:21:34 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B12E000>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 24e23508-4505-4ad0-aa9e-10e755f11a74)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json
+17:21:34 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 4/5].
+17:21:42 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B12ED80>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 0353921b-e0b7-4676-b88b-59d4e79b0172)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json
+17:21:42 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 5/5].
+17:21:50 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B141CD0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 18910b82-f7b6-4f2c-9159-7bbaa86fb308)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/sentence_bert_config.json
+17:21:50 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B1427B0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: e6ef7456-9d8d-49c6-b00c-744bffdab15a)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
+17:21:50 | WARNING  | huggingface_hub.utils._http    | Retrying in 1s [Retry 1/5].
+17:21:51 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000018FF58AA660>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 25f36603-8ed1-4694-91ce-a60f4eea9315)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
+17:21:51 | WARNING  | huggingface_hub.utils._http    | Retrying in 2s [Retry 2/5].
+17:21:53 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B12EAE0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: c2099cc6-406a-44d2-a899-54fe89d4f64d)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
+17:21:53 | WARNING  | huggingface_hub.utils._http    | Retrying in 4s [Retry 3/5].
+17:21:57 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B12DE80>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 3e1f0050-7824-423a-9724-0d69dc55598b)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
+17:21:57 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 4/5].
+17:22:05 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x000001903B12D6A0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: f38d63e7-6f65-486c-8b34-74f481ce7cad)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
+17:22:05 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 5/5].
+17:22:13 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000018FF58D2990>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 41a90787-9a60-4fe8-b9c6-9c19294866c8)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
+17:22:16 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000018FF58D3DD0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: e4329c3d-c1f4-48c4-8616-159b688bdfa5)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json
+17:22:16 | WARNING  | huggingface_hub.utils._http    | Retrying in 1s [Retry 1/5].
+17:22:17 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000018FF58D39E0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 2ae57172-7bae-44be-b4af-dac6a24b5b7c)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json
+17:22:17 | WARNING  | huggingface_hub.utils._http    | Retrying in 2s [Retry 2/5].
+17:22:19 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000018FF58D1430>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 125979aa-0f43-4baa-a6e9-32e8bc0d23b4)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json
+17:22:19 | WARNING  | huggingface_hub.utils._http    | Retrying in 4s [Retry 3/5].
+17:22:23 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000018FF58D0FE0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: b3fe2696-7f18-4b95-b448-785f17f0e720)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json
+17:22:23 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 4/5].
+17:22:31 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000018FF58D0B90>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: db1607f5-7618-49c3-b7ce-d80e96d040e3)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json
+17:22:31 | WARNING  | huggingface_hub.utils._http    | Retrying in 8s [Retry 5/5].
+17:22:39 | WARNING  | huggingface_hub.utils._http    | '(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json (Caused by NameResolutionError("<urllib3.connection.HTTPSConnection object at 0x0000018FC19884D0>: Failed to resolve \'huggingface.co\' ([Errno 11001] getaddrinfo failed)"))'), '(Request ID: 83ab15ac-cd9b-42da-92e0-6e804c33b233)')' thrown while requesting HEAD https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/tokenizer_config.json
+17:22:39 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+17:22:39 | INFO     | src.book_recommender.ml.embedder | Generating embeddings for 3 books...
+17:23:01 | INFO     | src.book_recommender.ml.embedder | Embeddings generated with shape: (3, 384)
+17:23:01 | INFO     | src.book_recommender.data.processor | Starting data cleaning and preparation...
+17:23:01 | INFO     | src.book_recommender.data.processor | Found columns in CSV: ['title', 'authors', 'genres', 'description', 'tags']
+17:23:01 | WARNING  | src.book_recommender.data.processor | No 'book_id' column found. Generated 'id' from DataFrame index.
+17:23:01 | INFO     | src.book_recommender.data.processor | Creating 'combined_text' for embeddings with weighted fields...
+17:23:01 | INFO     | src.book_recommender.ml.embedder | Generating embeddings for 4 books...
+17:23:01 | INFO     | src.book_recommender.ml.embedder | Embeddings generated with shape: (4, 384)
+17:23:01 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 4 vectors.
+17:23:01 | INFO     | src.book_recommender.ml.recommender | Found 1 recommendations for 'A Farewell to Arms'.
+17:23:01 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 5 vectors.
+17:23:01 | INFO     | src.book_recommender.ml.recommender | Found 1 recommendations for 'alpha book'.
+17:23:01 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 5 vectors.
+17:23:01 | WARNING  | src.book_recommender.ml.recommender | Title 'non existent book' not found in the dataset.
+17:23:01 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 5 vectors.
+17:23:01 | INFO     | src.book_recommender.ml.recommender | Found 1 recommendations for 'beta book'.
+19:38:33 | INFO     | root                           | Logging configured | Level: INFO | File: logs\app.log
+19:38:47 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 9870 vectors.
+19:51:19 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+19:51:56 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+19:51:56 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'Whodunnit mystery thriller...'
+19:52:00 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'Whodunnit mystery thriller...'
+19:52:30 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'Epic fantasy with dragons and magic...'
+19:52:31 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'Epic fantasy with dragons and magic...'
+19:52:32 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Dragon and the Princess'
+19:52:32 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'A Game of Thrones / A Clash of Kings (A Song of Ice and Fire, #1-2)'
+19:52:32 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Dealing with Dragons (Enchanted Forest Chronicles, #1)'
+19:52:32 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Eyes of the Dragon'
+19:52:32 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Dreamer (Chronicles of Marithe, #1)'
+19:52:32 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Dragon of Legend: Destiny: Fantasy Dragon Adventure'
+19:52:32 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Book of Dragons'
+19:52:32 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Dragon Keeper (Rain Wild Chronicles, #1)'
+19:52:33 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Dragonet Prophecy (Wings of Fire, #1)'
+21:15:30 | INFO     | src.book_recommender.data.processor | Loading raw data from C:\Users\alnic\AppData\Local\Temp\tmpsawo0sx0\test_books.csv...
+21:15:30 | INFO     | src.book_recommender.data.processor | Loaded 4 rows.
+21:15:30 | INFO     | src.book_recommender.data.processor | Starting data cleaning and preparation...
+21:15:30 | INFO     | src.book_recommender.data.processor | Found columns in CSV: ['title', 'authors', 'genres', 'description', 'tags']
+21:15:30 | WARNING  | src.book_recommender.data.processor | No 'book_id' column found. Generated 'id' from DataFrame index.
+21:15:31 | WARNING  | src.book_recommender.data.processor | Dropped 1 rows with missing titles.
+21:15:31 | INFO     | src.book_recommender.data.processor | Creating 'combined_text' for embeddings with weighted fields...
+21:15:31 | INFO     | src.book_recommender.data.processor | Saving processed data to C:\Users\alnic\AppData\Local\Temp\tmpsawo0sx0\test_books_cleaned.parquet...
+21:15:33 | INFO     | src.book_recommender.data.processor | Successfully saved 3 processed rows.
+21:15:33 | INFO     | src.book_recommender.data.processor | Loading raw data from C:\Users\alnic\AppData\Local\Temp\tmpuvtkngll\test_books.csv...
+21:15:33 | INFO     | src.book_recommender.data.processor | Loaded 0 rows.
+21:15:33 | INFO     | src.book_recommender.data.processor | Starting data cleaning and preparation...
+21:15:33 | INFO     | src.book_recommender.data.processor | Found columns in CSV: ['title', 'authors', 'genres', 'description', 'tags']
+21:15:33 | WARNING  | src.book_recommender.data.processor | No 'book_id' column found. Generated 'id' from DataFrame index.
+21:15:33 | ERROR    | src.book_recommender.data.processor | DataFrame is empty after cleaning. No valid book data to process.
+21:15:34 | INFO     | src.book_recommender.data.processor | Loading raw data from C:\Users\alnic\AppData\Local\Temp\tmpv67ea3yz\test_books.csv...
+21:15:34 | ERROR    | src.book_recommender.data.processor | Failed to parse CSV from C:\Users\alnic\AppData\Local\Temp\tmpv67ea3yz\test_books.csv: Error tokenizing data. C error: EOF inside string starting at row 2
+21:15:34 | ERROR    | src.book_recommender.data.processor | Raw data file not found at: non_existent_file.csv
+21:15:34 | INFO     | src.book_recommender.data.processor | Loading raw data from C:\Users\alnic\AppData\Local\Temp\tmpdjhjkcox\test_books.csv...
+21:15:34 | INFO     | src.book_recommender.data.processor | Loaded 3 rows.
+21:15:34 | INFO     | src.book_recommender.data.processor | Starting data cleaning and preparation...
+21:15:34 | INFO     | src.book_recommender.data.processor | Found columns in CSV: ['title', 'authors', 'genres', 'description', 'tags']
+21:15:34 | WARNING  | src.book_recommender.data.processor | No 'book_id' column found. Generated 'id' from DataFrame index.
+21:15:34 | INFO     | src.book_recommender.data.processor | Creating 'combined_text' for embeddings with weighted fields...
+21:15:34 | INFO     | src.book_recommender.data.processor | Saving processed data to C:\Users\alnic\AppData\Local\Temp\tmpdjhjkcox\test_books_cleaned.parquet...
+21:15:34 | INFO     | src.book_recommender.data.processor | Successfully saved 3 processed rows.
+21:15:34 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:15:47 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+21:15:47 | INFO     | src.book_recommender.ml.embedder | Generating embeddings for 3 books...
+21:16:46 | INFO     | src.book_recommender.ml.embedder | Embeddings generated with shape: (3, 384)
+21:16:46 | INFO     | src.book_recommender.data.processor | Starting data cleaning and preparation...
+21:16:46 | INFO     | src.book_recommender.data.processor | Found columns in CSV: ['title', 'authors', 'genres', 'description', 'tags']
+21:16:46 | WARNING  | src.book_recommender.data.processor | No 'book_id' column found. Generated 'id' from DataFrame index.
+21:16:46 | INFO     | src.book_recommender.data.processor | Creating 'combined_text' for embeddings with weighted fields...
+21:16:46 | INFO     | src.book_recommender.ml.embedder | Generating embeddings for 4 books...
+21:16:48 | INFO     | src.book_recommender.ml.embedder | Embeddings generated with shape: (4, 384)
+21:16:48 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 4 vectors.
+21:16:48 | INFO     | src.book_recommender.ml.recommender | Found 1 recommendations for 'A Farewell to Arms'.
+21:16:54 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 5 vectors.
+21:16:54 | INFO     | src.book_recommender.ml.recommender | Found 1 recommendations for 'alpha book'.
+21:16:54 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 5 vectors.
+21:16:54 | WARNING  | src.book_recommender.ml.recommender | Title 'non existent book' not found in the dataset.
+21:16:54 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 5 vectors.
+21:16:54 | INFO     | src.book_recommender.ml.recommender | Found 1 recommendations for 'beta book'.
+21:31:49 | INFO     | root                           | Logging configured | Level: INFO | File: logs\app.log
+21:31:56 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 9870 vectors.
+21:31:56 | INFO     | __main__                       | Generating/Loading cluster data for Streamlit app...
+21:31:57 | INFO     | src.book_recommender.ml.clustering | Starting K-Means clustering with 20 clusters...
+21:32:03 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:32:03 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:32:11 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:32:37 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+21:32:37 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+21:32:37 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'A psychological thriller with unexpected twists...'
+21:32:37 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'A psychological thriller with unexpected twists...'
+21:33:30 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Automaton'
+21:33:30 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Fear Index'
+21:33:30 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Twisted', got 'A Companion to Mexican History and Culture'. Skipping.
+21:33:30 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Twisted Love'
+21:33:30 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Betrayal', got 'Tim Tigner Standalone Thrillers'. Skipping.
+21:33:30 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Scare'
+21:33:30 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Disclaimer'
+21:33:30 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Unparalleled', got 'The Economy of British America, 1607-1789'. Skipping.
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Disclaimer' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted (Sinister Tales, #2)' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted Love' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Scare' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Midnight Obsession (Midnight, #4)' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Unparalleled' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Automaton' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Betrayal' based on query 'A psychological thriller with unexpected twists'
+21:33:31 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Fear Index' based on query 'A psychological thriller with unexpected twists'
+21:34:26 | INFO     | src.book_recommender.ml.clustering | K-Means clustering completed.
+21:34:26 | INFO     | src.book_recommender.ml.clustering | Generating descriptive names for clusters...
+21:34:27 | INFO     | src.book_recommender.ml.clustering | Cluster names generated.
+21:34:27 | INFO     | __main__                       | Cluster data generated/loaded and cached for Streamlit app.
+21:34:29 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Da Vinci Code (Robert Langdon, #2)'
+21:34:29 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Murder on the Orient Express (Hercule Poirot, #10)'
+21:34:29 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Girl Who Kicked the Hornet's Nest (Millennium, #3)'
+21:34:29 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Crime and Punishment'
+21:34:29 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Girl Who Played with Fire (Millennium, #2)'
+21:34:30 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'In Cold Blood'
+21:34:30 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'A Time to Kill (Jake Brigance, #1)'
+21:34:30 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Devil in the White City: Murder, Magic, and Madness at the Fair That Changed America'
+21:34:30 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'The Silence of the Lambs  (Hannibal Lecter, #2)', got 'Hannibal Rising'. Skipping.
+21:34:31 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Midnight in the Garden of Good and Evil'
+21:36:18 | INFO     | root                           | Logging configured | Level: INFO | File: logs\app.log
+21:36:32 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:36:37 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+21:36:37 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'A psychological thriller with unexpected twists...'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Disclaimer' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted (Sinister Tales, #2)' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted Love' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Scare' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Midnight Obsession (Midnight, #4)' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Unparalleled' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Automaton' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Betrayal' based on query 'A psychological thriller with unexpected twists'
+21:36:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Fear Index' based on query 'A psychological thriller with unexpected twists'
+21:48:34 | INFO     | root                           | Logging configured | Level: INFO | File: logs\app.log
+21:48:49 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 9870 vectors.
+21:49:26 | INFO     | root                           | Logging configured | Level: INFO | File: logs\app.log
+21:49:27 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 9870 vectors.
+21:49:27 | INFO     | __main__                       | Generating/Loading cluster data for Streamlit app...
+21:49:27 | INFO     | src.book_recommender.ml.clustering | Starting K-Means clustering with 20 clusters...
+21:49:30 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:49:30 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:49:44 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:50:05 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+21:50:05 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+21:50:05 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'A psychological thriller with unexpected twists...'
+21:50:05 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'A psychological thriller with unexpected twists...'
+21:50:35 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Automaton'
+21:50:35 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Scare'
+21:50:35 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Twisted Love'
+21:50:35 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Betrayal', got 'Tim Tigner Standalone Thrillers'. Skipping.
+21:50:35 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Disclaimer'
+21:50:35 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Unparalleled'
+21:50:35 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Twisted', got 'A Companion to Mexican History and Culture'. Skipping.
+21:50:36 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Fear Index'
+21:50:36 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Disclaimer' based on query 'A psychological thriller with unexpected twists'
+21:50:36 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted (Sinister Tales, #2)' based on query 'A psychological thriller with unexpected twists'
+21:50:36 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted Love' based on query 'A psychological thriller with unexpected twists'
+21:50:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Scare' based on query 'A psychological thriller with unexpected twists'
+21:50:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Midnight Obsession (Midnight, #4)' based on query 'A psychological thriller with unexpected twists'
+21:50:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Unparalleled' based on query 'A psychological thriller with unexpected twists'
+21:50:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted' based on query 'A psychological thriller with unexpected twists'
+21:50:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Automaton' based on query 'A psychological thriller with unexpected twists'
+21:50:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Betrayal' based on query 'A psychological thriller with unexpected twists'
+21:50:37 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Fear Index' based on query 'A psychological thriller with unexpected twists'
+21:50:43 | INFO     | src.book_recommender.ml.clustering | K-Means clustering completed.
+21:50:43 | INFO     | src.book_recommender.ml.clustering | Generating descriptive names for clusters...
+21:50:43 | INFO     | src.book_recommender.ml.clustering | Cluster names generated.
+21:50:43 | INFO     | __main__                       | Cluster data generated/loaded and cached for Streamlit app.
+21:50:46 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Da Vinci Code (Robert Langdon, #2)'
+21:50:46 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Devil in the White City: Murder, Magic, and Madness at the Fair That Changed America'
+21:50:46 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'A Time to Kill (Jake Brigance, #1)'
+21:50:46 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Murder on the Orient Express (Hercule Poirot, #10)'
+21:50:46 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Crime and Punishment'
+21:50:46 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Girl Who Played with Fire (Millennium, #2)'
+21:50:46 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Girl Who Kicked the Hornet's Nest (Millennium, #3)'
+21:50:46 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'In Cold Blood'
+21:50:47 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Midnight in the Garden of Good and Evil'
+21:50:48 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'The Silence of the Lambs  (Hannibal Lecter, #2)', got '新・ジャンル別　 洋書ベスト500プラス'. Skipping.
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Disclaimer' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted (Sinister Tales, #2)' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted Love' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Scare' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Midnight Obsession (Midnight, #4)' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Unparalleled' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Automaton' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Betrayal' based on query 'A psychological thriller with unexpected twists'
+21:50:59 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Fear Index' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Disclaimer' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted (Sinister Tales, #2)' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted Love' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Scare' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Midnight Obsession (Midnight, #4)' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Unparalleled' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Twisted' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Automaton' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Betrayal' based on query 'A psychological thriller with unexpected twists'
+21:51:05 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Fear Index' based on query 'A psychological thriller with unexpected twists'
+21:51:14 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'sex
+...'
+21:51:15 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'sex
+...'
+21:51:16 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Joy of Sex'
+21:51:16 | INFO     | src.book_recommender.utils     | Found Google Books cover for '199 Ways To Improve Your Relationships, Marriage, and Sex Life'
+21:51:16 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Sex: How to Get More of It: A guy's roadmap to paradise, in and out of the bedroom', got 'Sex - How to Get More of It'. Skipping.
+21:51:16 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Sex in the Title: A Comedy about Dating, Sex, and Romance in NYC'
+21:51:17 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Bonk: The Curious Coupling of Science and Sex'
+21:51:17 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Mating in Captivity: Reconciling the Erotic and the Domestic'
+21:51:17 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Come as You Are: The Surprising New Science that Will Transform Your Sex Life'
+21:51:17 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Sex at Dawn: The Prehistoric Origins of Modern Sexuality'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Sex: How to Get More of It: A guy's roadmap to paradise, in and out of the bedroom' based on query 'sex
+'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Joy of Sex' based on query 'sex
+'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Sex in the Title: A Comedy about Dating, Sex, and Romance in NYC' based on query 'sex
+'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for '199 Ways To Improve Your Relationships, Marriage, and Sex Life' based on query 'sex
+'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Bonk: The Curious Coupling of Science and Sex' based on query 'sex
+'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Come as You Are: The Surprising New Science that Will Transform Your Sex Life' based on query 'sex
+'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Sex Lessons' based on query 'sex
+'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Mating in Captivity: Reconciling the Erotic and the Domestic' based on query 'sex
+'
+21:51:18 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Sex at Dawn: The Prehistoric Origins of Modern Sexuality' based on query 'sex
+'
+21:51:51 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'erotica
+...'
+21:51:51 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'erotica
+...'
+21:51:53 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Awakening', got 'The Sailors' Magazine and Seamen's Friend'. Skipping.
+21:51:53 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Dark Temptations: The Naughty Proposal!', got 'Lust or Love: 4 Passionate Romance Stories | Will lust lead to Love or Betrayal?'. Skipping.
+21:51:53 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Nira/Sussa'
+21:51:53 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The History of Sexuality, Volume 1: An Introduction'
+21:51:53 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Interludes: A Sexual Odyssey'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Awakening' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Interludes: A Sexual Odyssey' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Nira/Sussa' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'A Decade of Desire: Erotic Tales from the Charlie Doyle Diaries' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Mating in Captivity: Reconciling the Erotic and the Domestic' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'High Couch of Silistra (Silistra, #1)' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Dark Temptations: The Naughty Proposal!' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Joy of Sex' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Bonk: The Curious Coupling of Science and Sex' based on query 'erotica
+'
+21:51:54 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The History of Sexuality, Volume 1: An Introduction' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Awakening' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Interludes: A Sexual Odyssey' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Nira/Sussa' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Nira/Sussa' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'A Decade of Desire: Erotic Tales from the Charlie Doyle Diaries' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Mating in Captivity: Reconciling the Erotic and the Domestic' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'High Couch of Silistra (Silistra, #1)' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Dark Temptations: The Naughty Proposal!' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Joy of Sex' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Bonk: The Curious Coupling of Science and Sex' based on query 'erotica
+'
+21:52:23 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The History of Sexuality, Volume 1: An Introduction' based on query 'erotica
+'
+21:54:24 | INFO     | root                           | Logging configured | Level: INFO | File: logs\app.log
+21:54:24 | INFO     | src.book_recommender.ml.recommender | Recommender initialized with FAISS index containing 9870 vectors.
+21:54:24 | INFO     | __main__                       | Generating/Loading cluster data for Streamlit app...
+21:54:24 | INFO     | src.book_recommender.ml.clustering | Starting K-Means clustering with 20 clusters...
+21:54:39 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:54:39 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:54:41 | INFO     | src.book_recommender.ml.embedder | Loading sentence-transformer model: all-MiniLM-L6-v2...
+21:54:41 | INFO     | src.book_recommender.ml.clustering | K-Means clustering completed.
+21:54:41 | INFO     | src.book_recommender.ml.clustering | Generating descriptive names for clusters...
+21:54:41 | INFO     | src.book_recommender.ml.clustering | Cluster names generated.
+21:54:41 | INFO     | __main__                       | Cluster data generated/loaded and cached for Streamlit app.
+21:54:45 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+21:54:45 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'A heartwarming romance set in a small town...'
+21:54:45 | INFO     | src.book_recommender.ml.embedder | Model loaded successfully.
+21:54:45 | INFO     | src.book_recommender.ml.embedder | Generating embedding for query: 'A heartwarming romance set in a small town...'
+21:54:49 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'On Dublin Street (On Dublin Street, #1)'
+21:54:49 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Fallen in Love (Fallen, #3.5)', got 'The Fallen Series: 4-Book Collection'. Skipping.
+21:54:49 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'Past, Present, and Promises', got 'Past, Present and Future of Research in the Information Society'. Skipping.
+21:54:49 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Two Gentlemen Sharing: A Novel'
+21:54:49 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Comfort of Strangers'
+21:54:50 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Our Town'
+21:54:50 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Ballad of the Sad Café and Other Stories'
+21:54:51 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Hometown Girl at Heart (Hometown, #1)' based on query 'A heartwarming romance set in a small town'
+21:54:51 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Comfort of Strangers' based on query 'A heartwarming romance set in a small town'
+21:54:51 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Past, Present, and Promises' based on query 'A heartwarming romance set in a small town'
+21:54:51 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Ballad of the Sad Café and Other Stories' based on query 'A heartwarming romance set in a small town'
+21:54:52 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Our Town' based on query 'A heartwarming romance set in a small town'
+21:54:52 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Two Gentlemen Sharing: A Novel' based on query 'A heartwarming romance set in a small town'
+21:54:52 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'On Dublin Street (On Dublin Street, #1)' based on query 'A heartwarming romance set in a small town'
+21:54:52 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'The Last Valentine' based on query 'A heartwarming romance set in a small town'
+21:54:52 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'Fallen in Love (Fallen, #3.5)' based on query 'A heartwarming romance set in a small town'
+21:54:52 | INFO     | src.book_recommender.ml.explainability | Generating explanation for 'A Town Like Alice' based on query 'A heartwarming romance set in a small town'
+21:54:53 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'In Cold Blood'
+21:54:53 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Girl Who Kicked the Hornet's Nest (Millennium, #3)'
+21:54:53 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Devil in the White City: Murder, Magic, and Madness at the Fair That Changed America'
+21:54:54 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'A Time to Kill (Jake Brigance, #1)'
+21:54:54 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Da Vinci Code (Robert Langdon, #2)'
+21:54:54 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Murder on the Orient Express (Hercule Poirot, #10)'
+21:54:54 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Crime and Punishment'
+21:54:54 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'The Girl Who Played with Fire (Millennium, #2)'
+21:54:54 | INFO     | src.book_recommender.utils     | Found Google Books cover for 'Midnight in the Garden of Good and Evil'
+21:54:55 | INFO     | src.book_recommender.utils     | Google Books mismatch: queried 'The Silence of the Lambs  (Hannibal Lecter, #2)', got 'Hannibal Rising'. Skipping.

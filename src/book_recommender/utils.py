@@ -4,6 +4,7 @@ import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 from functools import lru_cache
 from typing import Optional
+import difflib
 
 import requests
 import streamlit as st
@@ -15,6 +16,17 @@ PLACEHOLDER_IMAGES = [
     "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=300&h=450&fit=crop",
     "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=300&h=450&fit=crop",
 ]
+
+
+def _strings_are_similar(s1: str, s2: str, threshold: float = 0.6) -> bool:
+    """Check if two strings are similar using sequence matching or containment."""
+    if not s1 or not s2:
+        return False
+    s1, s2 = s1.lower(), s2.lower()
+    # Check for containment (handles substrings like "Harry Potter" in "Harry Potter and the...")
+    if s1 in s2 or s2 in s1:
+        return True
+    return difflib.SequenceMatcher(None, s1, s2).ratio() > threshold
 
 
 def ensure_dir_exists(file_path: str):
@@ -66,6 +78,13 @@ def _get_cover_from_google_books(title: str, author: str) -> Optional[str]:
             items = data.get("items", [])
             if items and "volumeInfo" in items[0]:
                 volume_info = items[0]["volumeInfo"]
+                
+                # Validate match to avoid false positives
+                found_title = volume_info.get("title", "")
+                if not _strings_are_similar(title, found_title):
+                    logger.info(f"Google Books mismatch: queried '{title}', got '{found_title}'. Skipping.")
+                    return None
+
                 image_links = volume_info.get("imageLinks", {})
 
                 for size in ["large", "medium", "small", "thumbnail", "smallThumbnail"]:
