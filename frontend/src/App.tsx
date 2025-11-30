@@ -248,7 +248,7 @@ function App() {
                 <span className="text-indigo-600 dark:text-indigo-500">obsession.</span>
               </h1>
               <p className="text-lg max-w-md mx-auto text-zinc-500 dark:text-zinc-400 leading-relaxed">
-                AI-powered semantic search for books. Describe the vibe, plot, or character you're looking for.
+                Describe the vibe, plot, or character you're looking for.
               </p>
             </div>
           )}

@@ -12,7 +12,7 @@ export const api = {
   recommendByQuery: async (query: string): Promise<RecommendationResult[]> => {
     const response = await axios.post<RecommendationResult[]>(`${API_URL}/recommend/query`, {
       query,
-      top_k: 5,
+      top_k: 12,
     });
     return response.data;
   },
@@ -44,7 +44,7 @@ export const api = {
   getRelatedBooks: async (title: string): Promise<RecommendationResult[]> => {
     const response = await axios.post<RecommendationResult[]>(`${API_URL}/recommend/title`, {
       title,
-      top_k: 3,
+      top_k: 6,
     });
     return response.data;
   }
