@@ -5,6 +5,7 @@ import os
 import sys
 from functools import lru_cache
 from typing import Optional
+from pathlib import Path
 
 # Add the project root to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
@@ -20,9 +21,12 @@ logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=1)
-def _load_model(model_name: str = config.EMBEDDING_MODEL) -> SentenceTransformer:
+def load_model(model_name: str = config.EMBEDDING_MODEL) -> SentenceTransformer:
     """
     Loads and caches the sentence-transformer model.
+    
+    Checks for a local cache at 'data/processed/model_cache'. 
+    If not found or incomplete, downloads and saves it.
 
     Args:
         model_name (str): The name of the model to load.
@@ -33,15 +37,25 @@ def _load_model(model_name: str = config.EMBEDDING_MODEL) -> SentenceTransformer
     Raises:
         ModelLoadError: If the model cannot be loaded.
     """
-    # NOTE: The SentenceTransformer model (e.g., 'all-MiniLM-L6-v2') is downloaded
-    # from the internet on its first use. This model can be ~80MB+. For production
-    # environments, it's recommended to pre-download the model and store it locally
-    # within the Docker image or a persistent volume to avoid runtime downloads
-    # and ensure faster, more reliable deployments.
+    cache_path = config.PROCESSED_DATA_DIR / "model_cache"
+    
     try:
-        logger.info(f"Loading sentence-transformer model: {model_name}...")
+        # Robust check: A valid model directory must contain 'modules.json'
+        if cache_path.exists() and (cache_path / "modules.json").exists():
+            logger.info(f"Loading model from local project cache: {cache_path}")
+            model = SentenceTransformer(str(cache_path), device=config.EMBEDDING_DEVICE)
+            logger.info("Model loaded successfully from cache.")
+            return model
+        
+        logger.info(f"Model not found in project cache (or incomplete). Downloading {model_name}...")
         model = SentenceTransformer(model_name, device=config.EMBEDDING_DEVICE)
-        logger.info("Model loaded successfully.")
+        
+        logger.info(f"Saving model to project cache: {cache_path}")
+        # Ensure parent directory exists
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        model.save(str(cache_path))
+        logger.info("Model saved to cache.")
+        
         return model
     except Exception as e:
         logger.error(f"Failed to load sentence-transformer model '{model_name}': {e}")
@@ -70,7 +84,7 @@ def generate_embeddings(
     Returns:
         np.ndarray: A 2D NumPy array containing the generated embeddings.
     """
-    model = _load_model(model_name)
+    model = load_model(model_name)
 
     logger.info(f"Generating embeddings for {len(df)} books...")
     try:
@@ -100,7 +114,7 @@ def generate_embedding_for_query(
         np.ndarray: A 1D NumPy array representing the query embedding.
     """
     if model is None:
-        model = _load_model(model_name)
+        model = load_model(model_name)
     
     logger.info(f"Generating embedding for query: '{query[:50]}...'")
     embedding = model.encode(query, show_progress_bar=False)

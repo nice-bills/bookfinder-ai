@@ -4,7 +4,7 @@ import sys
 from sentence_transformers import SentenceTransformer
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from src import config
+from src.book_recommender.core import config
 
 
 def download_model():

@@ -20,7 +20,7 @@ from src.book_recommender.ml.clustering import (
     get_cluster_names,
 )
 from src.book_recommender.ml.embedder import (
-    _load_model as embedder_load_model,
+    load_model as embedder_load_model,
 )
 from src.book_recommender.ml.recommender import BookRecommender
 
@@ -55,16 +55,12 @@ def get_recommender() -> BookRecommender:
 
 @lru_cache(maxsize=1)
 def get_sentence_transformer_model() -> SentenceTransformer:
-    """Load model with disk caching"""
-    if MODEL_CACHE_PATH.exists():
-        logger.info("Loading model from cache...")
-        model = SentenceTransformer(str(MODEL_CACHE_PATH))
-    else:
-        logger.info("Downloading and caching model...")
-        model = embedder_load_model(config.EMBEDDING_MODEL)
-        model.save(str(MODEL_CACHE_PATH))
-    logger.info("Embedding model ready")
-    return model
+    """
+    Load model using the centralized, robust loader from embedder.py.
+    The loader handles checking for a local cache and downloading if missing.
+    """
+    logger.info("Requesting embedding model...")
+    return embedder_load_model(config.EMBEDDING_MODEL)
 
 
 @lru_cache(maxsize=1)

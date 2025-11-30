@@ -68,7 +68,20 @@ def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     df["title_lower"] = df["title"].str.strip().str.lower()
     df["authors_lower"] = df["authors"].str.strip().str.lower()
 
-    for col in ["genres", "description", "tags"]:
+    # Clean description text (remove HTML tags and artifacts)
+    # This regex removes <br>, <i>, <b> tags and their closing counterparts
+    import re
+    def clean_html_text(text):
+        if not isinstance(text, str):
+            return text
+        text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)  # Replace <br> with newline
+        text = re.sub(r'<[^>]+>', '', text)  # Remove other HTML tags
+        return text.strip()
+
+    df["description"] = df["description"].apply(clean_html_text)
+
+    # Lowercase genres/tags for normalization, but keep description/title case for display
+    for col in ["genres", "tags"]:
         df[col] = df[col].str.strip().str.lower()
 
     original_rows = len(df)
@@ -90,6 +103,7 @@ def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         )
 
     logger.info("Creating 'combined_text' for embeddings with weighted fields...")
+    # Use lowercased description ONLY for embedding generation, not for storage
     df["combined_text"] = (
         (df["title_lower"] + " ") * 3
         + "by "
@@ -99,7 +113,7 @@ def process_dataframe(df: pd.DataFrame) -> pd.DataFrame:
         + df["genres"]
         + ". "
         + "description: "
-        + df["description"]
+        + df["description"].str.lower()
         + ". "
         + "tags: "
         + df["tags"]

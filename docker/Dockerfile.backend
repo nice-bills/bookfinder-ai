@@ -23,33 +23,36 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
+# Install runtime dependencies (curl for healthcheck)
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Copy wheels from builder
 COPY --from=builder /app/wheels /wheels
 COPY --from=builder /app/requirements.backend.txt .
 
 # Install dependencies
 RUN pip install --no-cache /wheels/*
+# Explicitly install huggingface_hub if not in requirements
+RUN pip install --no-cache huggingface_hub
 
 # Copy Code
 COPY src/ ./src/
+COPY scripts/ ./scripts/
 
-# Copy Data (Only processed data needed for inference)
-# Ensure you have run 'scripts/prepare_goodreads_data.py' before building!
-COPY data/processed/ ./data/processed/
-# Create directory for feedback/logs
-RUN mkdir -p data/feedback logs
+# Create directory structure and set permissions
+RUN mkdir -p data/processed data/feedback logs && \
+    addgroup --system app && adduser --system --group app && \
+    chown -R app:app /app
 
-# Create a non-root user for security
-RUN addgroup --system app && adduser --system --group app
-RUN chown -R app:app /app
 USER app
 
 # Expose port (Render sets PORT env var, default to 8000)
 EXPOSE 8000
 
 # Healthcheck
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=30s --start-period=30s --retries=3 \
   CMD curl -f http://localhost:8000/health || exit 1
 
-# Run Command
-CMD ["python", "-m", "uvicorn", "src.book_recommender.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run Command: Download data then start API
+# We use shell form to allow chaining commands with &&
+CMD ["sh", "-c", "python scripts/download_data.py && python -m uvicorn src.book_recommender.api.main:app --host 0.0.0.0 --port 8000"]

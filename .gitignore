@@ -42,6 +42,9 @@ env/
 data/raw/*.csv
 data/processed/*.parquet
 data/processed/*.npy
+data/processed/*.pkl
+data/processed/model_cache/
+data/processed/embedding_metadata.json
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 

@@ -25,13 +25,13 @@ def _generate_rule_based_summary(
     query_text: str, recommended_book: Dict[str, Any], contribution_scores: Dict[str, float]
 ) -> str:
     """Fallback: Generates a simple rule-based summary."""
-    summary = f"Recommended because it's a good match for your interest in '{query_text}'. "
+    summary = f"You got this recommendation because it's a good match for your interest in '{query_text}'. "
 
     matching_features = []
     if contribution_scores.get("genres", 0) > 0.1:
         book_genres_list = _normalize_to_list(recommended_book.get("genres"))
         if book_genres_list:
-            matching_features.append(f"shares genres like {', '.join(book_genres_list[:3])}")
+            matching_features.append(f"it shares genres such as {', '.join(book_genres_list[:3])}")
 
     if contribution_scores.get("description_keywords", 0) > 0.1:
         matching_features.append("has matching keywords in the description")
@@ -42,7 +42,7 @@ def _generate_rule_based_summary(
             matching_features.append(f"is by author(s) {', '.join(book_authors_list)}")
 
     if matching_features:
-        summary += "Specifically, it " + ", and ".join(matching_features) + "."
+        summary += "Specifically, " + ", and ".join(matching_features) + "."
     else:
         summary += "Its content aligns well with your query."
 
@@ -60,27 +60,29 @@ def _generate_llm_summary(query_text: str, recommended_book: Dict[str, Any]) -> 
         
         # System Prompt: Sets the persona and constraints
         system_content = (
-            "You are an objective literary analyst. "
-            "Your goal is to explain the specific thematic connection between a user's request and a book recommendation. "
-            "Be insightful, concise, and direct. Do not shy away from mature themes if they are relevant to the book's content."
+            "You are a helpful book assistant explaining recommendations to a reader. "
+            "Your goal is to explain the connection between their search and this book. "
+            "Address the reader directly as 'You'. "
+            "NEVER refer to 'the user' or 'the user's request' in the third person. "
+            "Be insightful, concise, and warm."
         )
 
         # User Prompt: Provides the data and specific task
         user_content = f"""
-        User Request: "{query_text}"
+        Reader's Search: "{query_text}"
         
         Book Metadata:
         - Title: {recommended_book.get('title')}
         - Author: {recommended_book.get('authors')}
         - Synopsis: {recommended_book.get('description')}
         
-        Task: Write a 2-sentence explanation of why this book fits the user's request. 
+        Task: Write a 2-sentence explanation of why this book fits the search. 
         
         Guidelines:
-        1. Explicitly link the specific themes or plot points in the synopsis to the user's keywords.
-        2. Do NOT simply summarize the book. Focus on the *match*.
-        3. Avoid generic phrases like "This book is a great choice." Start directly with the insight.
-        4. If the match is loose, focus on the genre or mood overlap.
+        1. Start directly with "You might like this because..." or "This matches your search for..."
+        2. Explicitly link specific themes in the synopsis to the search terms.
+        3. Do NOT summarize the plot unless it proves the match.
+        4. STRICTLY FORBIDDEN: Do not use the word "user".
         """
 
         completion = client.chat.completions.create(

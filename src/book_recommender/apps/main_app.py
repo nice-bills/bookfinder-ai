@@ -6,13 +6,14 @@ import pickle
 from datetime import datetime
 from typing import Optional
 from contextlib import contextmanager
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import streamlit as st
 import sys
-import os
 from sentence_transformers import SentenceTransformer
+from huggingface_hub import snapshot_download
 
 # Add the project root to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../..")))
@@ -40,6 +41,45 @@ logger = logging.getLogger(__name__)
 st.set_page_config(
     page_title="BookFinder - AI Book Recommendations", page_icon="📚", layout="wide", initial_sidebar_state="collapsed"
 )
+
+@st.cache_resource(show_spinner=False)
+def ensure_data_available():
+    """
+    Checks if data exists. If not, downloads from Hugging Face.
+    Uses st.secrets or env vars for configuration.
+    """
+    if (
+        config.PROCESSED_DATA_PATH.exists()
+        and config.EMBEDDINGS_PATH.exists()
+        and config.CLUSTERS_CACHE_PATH.exists()
+    ):
+        return
+
+    # Try getting ID from env var or Streamlit secrets
+    dataset_id = os.getenv("HF_DATASET_ID")
+    if not dataset_id and "HF_DATASET_ID" in st.secrets:
+        dataset_id = st.secrets["HF_DATASET_ID"]
+
+    if not dataset_id:
+        st.warning("HF_DATASET_ID not found. Using local data generation (slow). Set HF_DATASET_ID to download pre-computed data.")
+        return
+
+    try:
+        with st.spinner(f"Downloading 100MB+ dataset from Hugging Face ({dataset_id})... this happens only once!"):
+            config.PROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
+            
+            snapshot_download(
+                repo_id=dataset_id,
+                repo_type="dataset",
+                local_dir=config.PROCESSED_DATA_DIR,
+                local_dir_use_symlinks=False,
+                allow_patterns=["*.parquet", "*.npy", "*.pkl", "*.json"],
+                token=os.getenv("HF_TOKEN") # Optional for public datasets
+            )
+            st.success("Data downloaded successfully!")
+    except Exception as e:
+        st.error(f"Failed to download data: {e}")
+        logger.error(f"Download failed: {e}")
 
 
 @st.cache_resource(show_spinner=False)
@@ -803,6 +843,9 @@ def render_sidebar(recommender):
 
 def main():
     """Main application with UI."""
+    # Ensure data is present before doing anything else
+    ensure_data_available()
+    
     render_header()
 
     if "query" not in st.session_state:

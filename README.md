@@ -1,154 +1,163 @@
-# BookFinder AI 📚✨
+# 📚 BookFinder AI
 
-![Build Status](https://github.com/your-username/your-repo-name/actions/workflows/ci-cd.yml/badge.svg)
+> **An intelligent, semantic book recommendation engine powered by generic AI and Vector Search.**
 
-A modern, full-stack **Semantic Book Recommendation Engine**. It uses AI to understand the "vibe" of your request (not just keywords) and finds books that match your description.
+![Project Status](https://img.shields.io/badge/Status-MVP-success) ![Python](https://img.shields.io/badge/Python-3.10+-blue) ![Stack](https://img.shields.io/badge/Stack-FastAPI_|_React_|_Streamlit-orange) ![License](https://img.shields.io/badge/License-MIT-green)
 
-> **New:** Now featuring **Generative AI Explanations** powered by Groq (Llama 3), a tactile **React Frontend**, and a production-ready **Dockerized Backend**.
+## 📖 Project Overview
+**BookFinder AI** goes beyond simple keyword matching. It uses **Natural Language Processing (NLP)** and **Vector Embeddings** to understand the *meaning* and *vibe* of your search query. Whether you're looking for "a sci-fi mystery with time travel" or "a heartbreaking story about friendship in the 1920s," BookFinder AI understands the context and retrieves the most semantically similar books from a dataset of 100,000+ titles.
 
-## ✨ Features
+## 🚩 Problem Statement
+Traditional book recommendation systems often rely on:
+1.  **Collaborative Filtering:** "Users who bought X also bought Y" (requires massive user data, suffers from "cold start").
+2.  **Keyword Matching:** Fails to capture nuance (e.g., searching for "coming of age" might miss books that describe "growing up" without using that exact phrase).
 
-*   **🧠 Semantic Search:** Find books by describing plot, mood, or character (e.g., *"A cyberpunk detective story with a noir vibe"*).
-*   **🤖 AI Explanations:** Don't just get a list; get a personalized pitch. The app explains *why* a book fits your query using GenAI.
-*   **🎨 Dynamic UI:** A beautiful React interface with:
-    *   **Interactive Backgrounds:** "Lava Lamp" blobs, solid colors, or custom wallpapers.
-    *   **Haptic Feedback:** Tactile buttons and interactions.
-    *   **Glassmorphism:** Modern, translucent aesthetics.
-*   **🔍 Smart Discovery:**
-    *   **"More Like This":** Instantly find similar books from any detail view.
-    *   **Dynamic Clusters:** Explore automatically generated collections based on your library's themes.
-*   **⚡ High Performance:** Parallelized cover image fetching and optimized FAISS vector search.
+**The Solution:** A **Content-Based Semantic Search** engine that maps books and user queries into a shared high-dimensional vector space, allowing for nuanced, meaning-based discovery.
 
-## 🛠️ Tech Stack
+## 🏗️ Solution Architecture
 
-### **Frontend**
-*   **React 19** (Vite)
-*   **TypeScript**
-*   **Tailwind CSS** (Styling)
-*   **Lucide React** (Icons)
-*   **Axios** (API Client)
+The system follows a modern **Hybrid Architecture**:
 
-### **Backend**
-*   **Python 3.10+**
-*   **FastAPI** (Async API)
-*   **Sentence-Transformers** (Embeddings)
-*   **FAISS** (Vector Search)
-*   **Groq API** (Llama 3 for Explanations)
-*   **Pandas / NumPy** (Data Processing)
+### 1. The Brain (ML Pipeline)
+*   **Embeddings:** uses `sentence-transformers/all-MiniLM-L6-v2` to convert book descriptions into 384-dimensional vectors.
+*   **Vector Search:** uses **FAISS (Facebook AI Similarity Search)** for ultra-fast similarity retrieval.
+*   **Clustering:** uses **K-Means** to automatically group books into thematic collections (e.g., "Space Opera", "Regency Romance").
+*   **Explainability:** Uses **Groq (Llama 3)** to generate human-readable explanations for *why* a book was recommended.
 
-### **Infrastructure**
-*   **Docker** (Multi-stage builds)
-*   **Uvicorn** (ASGI Server)
+### 2. The Backend (API)
+*   **Framework:** FastAPI (Python).
+*   **Features:** Async endpoints, caching (LRU + Disk), Rate Limiting.
+*   **Deployment:** Dockerized, self-healing (auto-downloads data from Hugging Face).
+
+### 3. The Frontend (UI)
+*   **Primary:** React (Vite + Tailwind CSS + TypeScript) - A modern, responsive web app.
+*   **Admin/Prototyping:** Streamlit - A dashboard for testing and analytics.
 
 ---
 
-## 🚀 Quick Start (Local Development)
+## ✨ Key Features
+*   **Semantic Search:** Query in natural language (e.g., "books like Harry Potter but darker").
+*   **Hybrid Recommendations:** Combine semantic similarity with filters (rating, genre).
+*   **AI Explanations:** "You got this recommendation because..." (Personalized insights).
+*   **Automatic Clustering:** Browse auto-generated "collections" of books.
+*   **Feedback Loop:** Users can rate recommendations to help improve the system (logged for analytics).
 
-### 1. Prerequisites
+---
+
+## 🚀 Setup Instructions
+
+### Prerequisites
 *   Python 3.10+
-*   Node.js 18+ & npm
-*   [Groq API Key](https://console.groq.com) (Free)
+*   Node.js 18+ (for Frontend)
+*   Git
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yourusername/bookfinder-ai.git
+cd bookfinder-ai
+```
 
 ### 2. Backend Setup
+It is recommended to use a virtual environment.
 
-1.  **Install Python dependencies:**
-    ```bash
-    # Using uv (recommended)
-    uv pip install -e . -r requirements.txt
-    
-    # OR using standard pip
-    pip install -e . -r requirements.txt
-    ```
+```bash
+# Install uv (fast pip replacement) - Optional but recommended
+pip install uv
 
-2.  **Prepare Data:**
-    Place your `goodreads_data.csv` in `data/raw/` and run:
-    ```bash
-    python scripts/prepare_goodreads_data.py
-    ```
+# Create and activate venv
+uv venv
+# Windows: .venv\Scripts\activate
+# Mac/Linux: source .venv/bin/activate
 
-3.  **Configure Environment:**
-    Create a `.env` file in the root directory:
-    ```env
-    GROQ_API_KEY=gsk_your_actual_key_here
-    # Optional: Google Books API for better cover images
-    # GOOGLE_BOOKS_API_KEY=...
-    ```
+# Install dependencies
+uv pip install -r requirements.txt
+```
 
-4.  **Run API:**
-    ```bash
-    uv run uvicorn src.book_recommender.api.main:app --reload --host 0.0.0.0 --port 8000
-    ```
-    API will be live at `http://localhost:8000`.
+### 3. Data Preparation (The "Magic" Step)
+You have two options: **Download Pre-computed Data** (Fast) or **Generate from Scratch** (Slow).
 
-### 3. Frontend Setup
+**Option A: Download (Recommended)**
+The app includes a script to pull processed data (embeddings, clusters) from Hugging Face.
+```bash
+python scripts/download_data.py
+```
 
-1.  **Navigate to frontend:**
-    ```bash
-    cd frontend
-    ```
+**Option B: Generate from Scratch**
+If you want to process the raw CSV yourself (takes ~2-3 hours on CPU):
+```bash
+# 1. Clean and Prepare Raw Data
+python scripts/prepare_100k_data.py
+python src/book_recommender/data/processor.py
 
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
+# 2. Generate Embeddings (The heavy lifting)
+python src/book_recommender/ml/embedder.py
 
-3.  **Run Dev Server:**
-    ```bash
-    npm run dev
-    ```
-    App will be live at `http://localhost:5173`.
+# 3. Pre-compute Clusters
+python scripts/precompute_clusters.py
+```
+
+### 4. Run the Application
+
+**Start the Backend API:**
+```bash
+python src/book_recommender/api/main.py
+# API will run at http://localhost:8000
+# Docs at http://localhost:8000/docs
+```
+
+**Start the React Frontend:**
+```bash
+cd frontend
+npm install
+npm run dev
+# UI will run at http://localhost:5173
+```
+
+**(Optional) Run the Streamlit Dashboard:**
+```bash
+streamlit run src/book_recommender/apps/main_app.py
+```
 
 ---
 
 ## 🐳 Docker Deployment
 
-The project includes a production-ready Docker setup for the backend.
+The project is fully Dockerized.
 
-**Build the Backend Image:**
 ```bash
-docker build -f docker/Dockerfile.backend -t bookfinder-api .
+# Build and Run Backend
+docker build -t bookfinder-api -f docker/Dockerfile.backend .
+docker run -p 8000:8000 bookfinder-api
 ```
 
-**Run the Container:**
+*Note: The Docker container automatically runs `scripts/download_data.py` on startup to fetch the latest data artifacts.*
+
+---
+
+## 🧪 Usage Examples
+
+**API Request (Recommendation):**
 ```bash
-docker run -p 8000:8000 --env-file .env bookfinder-api
+curl -X POST "http://localhost:8000/recommend/query" \
+     -H "Content-Type: application/json" \
+     -d '{"query": "cyberpunk detective in neo-tokyo", "top_k": 5}'
 ```
 
-This image is optimized (slim) and ready for deployment on platforms like **Render**, **Railway**, or **Fly.io**.
-
----
-
-## 📂 Project Structure
-
-```
-bookfinder-ai/
-├── frontend/               # React Application
-│   ├── src/
-│   │   ├── api.ts          # API Client
-│   │   ├── App.tsx         # Main Component
-│   │   └── types.ts        # TypeScript Interfaces
-├── src/book_recommender/   # Python Package
-│   ├── api/                # FastAPI Endpoints
-│   ├── ml/                 # AI Logic (FAISS, Explainability)
-│   ├── data/               # Data Processing
-│   └── utils.py            # Utilities (Cover fetching)
-├── data/                   # Data Storage
-│   ├── raw/                # Input CSVs
-│   └── processed/          # Embeddings & Parquet
-├── docker/                 # Docker Configuration
-├── scripts/                # Data Prep Scripts
-└── tests/                  # Pytest Suite
+**API Request (Explainability):**
+```bash
+curl -X POST "http://localhost:8000/explain" \
+     -d '{"query_text": "...", "recommended_book": {...}, "similarity_score": 0.85}'
 ```
 
 ---
 
-## 🔮 Future Roadmap
+## 🤝 Contributing
+Contributions are welcome!
+1.  Fork the repo.
+2.  Create a feature branch (`git checkout -b feature/AmazingFeature`).
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the branch (`git push origin feature/AmazingFeature`).
+5.  Open a Pull Request.
 
-*   [ ] **Vector Database:** Migrate from local FAISS to Qdrant/Pinecone for scalability.
-*   [ ] **User Accounts:** Save favorite books and custom themes to a database.
-*   [ ] **Redis Caching:** Cache API responses and cover URLs for instant loading.
-*   [ ] **Automated Pipeline:** Auto-ingest new datasets dropped into `data/raw`.
-
----
-
-**License:** MIT
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.

@@ -370,7 +370,7 @@ function App() {
 
                         <div className="flex flex-wrap gap-1.5 pt-2">
                             {result.book.genres.slice(0, 3).map(genre => (
-                                <span key={genre} className="text-[10px] uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-500 border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 rounded-md">
+                                <span key={genre} className="text-[10px] uppercase tracking-wider font-bold text-zinc-500 dark:text-zinc-500 border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 px-2 py-1 rounded-md truncate max-w-[120px]" title={genre}>
                                 {genre}
                                 </span>
                             ))}
